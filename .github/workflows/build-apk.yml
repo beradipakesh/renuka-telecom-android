@@ -18,6 +18,8 @@ jobs:
           java-version: '17'
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
+      - name: Accept Android SDK licences
+        run: yes | sdkmanager --licenses
       - name: Install Android platform and build tools
         run: sdkmanager "platform-tools" "platforms;android-35" "build-tools;35.0.0"
       - name: Set up Gradle
@@ -26,6 +28,8 @@ jobs:
           gradle-version: '8.9'
       - name: Build debug APK
         run: gradle --no-daemon assembleDebug
+      - name: Verify APK
+        run: test -s app/build/outputs/apk/debug/app-debug.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
