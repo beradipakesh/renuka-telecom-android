@@ -738,25 +738,36 @@
         };
 
         let recoveryPromptOpen = false;
+        function showPasswordRecoveryForm() {
+            if (document.getElementById('renuka-recovery-overlay')) return;
+            const overlay = document.createElement('div');
+            overlay.id = 'renuka-recovery-overlay';
+            overlay.style.cssText = 'position:fixed;inset:0;z-index:999999;background:rgba(10,25,55,.82);display:flex;align-items:center;justify-content:center;padding:18px;font-family:Arial,sans-serif;';
+            overlay.innerHTML = '<div style="background:#fff;width:100%;max-width:440px;border-radius:18px;padding:24px;box-sizing:border-box;color:#1e293b"><h2 style="margin:0 0 10px;color:#17458b">নতুন ক্লাউড পাসওয়ার্ড সেট করুন</h2><p style="margin:0 0 16px;color:#64748b">কমপক্ষে ৬ অক্ষরের নতুন পাসওয়ার্ড দুবার লিখুন।</p><label style="display:block;margin:10px 0 6px">নতুন পাসওয়ার্ড</label><input id="renuka-new-pass" type="password" autocomplete="new-password" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:10px;font-size:17px"><label style="display:block;margin:14px 0 6px">আবার পাসওয়ার্ড লিখুন</label><input id="renuka-confirm-pass" type="password" autocomplete="new-password" style="width:100%;box-sizing:border-box;padding:14px;border:1px solid #cbd5e1;border-radius:10px;font-size:17px"><p id="renuka-recovery-error" style="color:#b91c1c;min-height:22px"></p><button id="renuka-save-pass" type="button" style="width:100%;padding:15px;border:0;border-radius:10px;background:#0866e8;color:#fff;font-size:17px;font-weight:bold">পাসওয়ার্ড পরিবর্তন করুন</button></div>';
+            document.body.appendChild(overlay);
+            document.getElementById('renuka-save-pass').addEventListener('click', async () => {
+                const a = document.getElementById('renuka-new-pass').value;
+                const b = document.getElementById('renuka-confirm-pass').value;
+                const err = document.getElementById('renuka-recovery-error');
+                if (a.length < 6) { err.textContent = 'পাসওয়ার্ড কমপক্ষে ৬ অক্ষরের হতে হবে।'; return; }
+                if (a !== b) { err.textContent = 'দুটি পাসওয়ার্ড মিলছে না।'; return; }
+                const btn = document.getElementById('renuka-save-pass');
+                btn.disabled = true; btn.textContent = 'সেভ হচ্ছে...'; err.textContent = '';
+                try {
+                    const { error } = await sbClient.auth.updateUser({ password: a });
+                    if (error) throw error;
+                    overlay.innerHTML = '<div style="background:#fff;max-width:440px;border-radius:18px;padding:26px;text-align:center;color:#166534"><h2>পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে</h2><p>এখন নতুন পাসওয়ার্ড দিয়ে অ্যাপে লগইন করুন।</p><button onclick="location.href=location.pathname" style="padding:13px 24px;background:#0866e8;color:white;border:0;border-radius:9px">লগইন পেজে যান</button></div>';
+                } catch (e) {
+                    btn.disabled = false; btn.textContent = 'পাসওয়ার্ড পরিবর্তন করুন';
+                    err.textContent = 'পাসওয়ার্ড পরিবর্তন হয়নি: ' + (e.message || 'আবার চেষ্টা করুন।');
+                }
+            });
+        }
         if (sbClient) {
             sbClient.auth.onAuthStateChange((event) => {
                 if (event === 'PASSWORD_RECOVERY' && !recoveryPromptOpen) {
                     recoveryPromptOpen = true;
-                    setTimeout(async () => {
-                        const newPassword = prompt('নতুন Supabase ক্লাউড পাসওয়ার্ড দিন (কমপক্ষে ৬ অক্ষর):');
-                        if (!newPassword || newPassword.length < 6) {
-                            alert('পাসওয়ার্ড পরিবর্তন করা হয়নি। রিসেট লিংক আবার খুলে চেষ্টা করুন।');
-                            recoveryPromptOpen = false;
-                            return;
-                        }
-                        try {
-                            const { error } = await sbClient.auth.updateUser({ password: newPassword });
-                            if (error) throw error;
-                            alert('ক্লাউড পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে। এখন নতুন পাসওয়ার্ড দিয়ে ক্লাউডে লগইন করতে পারবেন।');
-                        } catch (e) {
-                            alert('পাসওয়ার্ড পরিবর্তন হয়নি: ' + (e.message || 'আবার চেষ্টা করুন।'));
-                        } finally { recoveryPromptOpen = false; }
-                    }, 300);
+                    setTimeout(showPasswordRecoveryForm, 250);
                 }
             });
         }
