@@ -28,6 +28,9 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           path: site
+          name: renuka-reset-pages
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
+        with:
+          artifact_name: renuka-reset-pages
