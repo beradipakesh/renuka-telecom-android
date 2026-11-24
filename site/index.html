@@ -717,18 +717,25 @@
             return migrated;
         }
 
-        async function sendCloudPasswordReset() {
-            if (!sbClient) return alert('Supabase সংযোগ পাওয়া যায়নি। ইন্টারনেট চালু করে আবার চেষ্টা করুন।');
-            const ok = confirm('beradipakesh@gmail.com ঠিকানায় ক্লাউড পাসওয়ার্ড রিসেট করার ইমেইল পাঠাব?');
-            if (!ok) return;
+        // Expose the recovery handler explicitly for the login button's inline onclick.
+        window.sendCloudPasswordReset = async function sendCloudPasswordReset() {
             try {
-                const { error } = await sbClient.auth.resetPasswordForEmail(SUPABASE_AUTH_EMAIL, { redirectTo: PASSWORD_RESET_URL });
+                if (!window.supabase || !sbClient) {
+                    alert('Supabase সংযোগ তৈরি হয়নি। পেজ Reload করে আবার চেষ্টা করুন।');
+                    return;
+                }
+                const ok = confirm('beradipakesh@gmail.com ঠিকানায় ক্লাউড পাসওয়ার্ড রিসেটের ইমেইল পাঠাব?');
+                if (!ok) return;
+                const { error } = await sbClient.auth.resetPasswordForEmail(
+                    SUPABASE_AUTH_EMAIL,
+                    { redirectTo: PASSWORD_RESET_URL }
+                );
                 if (error) throw error;
-                alert('রিসেট ইমেইলের অনুরোধ পাঠানো হয়েছে। Gmail-এর Inbox ও Spam ফোল্ডার দেখুন। ইমেইলের লিংক খুলে নতুন পাসওয়ার্ড সেট করুন।');
+                alert('রিসেট ইমেইলের অনুরোধ পাঠানো হয়েছে। Gmail Inbox ও Spam দেখুন।');
             } catch (e) {
-                alert('রিসেট ইমেইল পাঠানো যায়নি: ' + (e.message || 'Supabase ইমেইল সেটিং পরীক্ষা করুন।'));
+                alert('রিসেট ইমেইল পাঠানো যায়নি: ' + (e && e.message ? e.message : 'অজানা সমস্যা'));
             }
-        }
+        };
 
         let recoveryPromptOpen = false;
         if (sbClient) {
