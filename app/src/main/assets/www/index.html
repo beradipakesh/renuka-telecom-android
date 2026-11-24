@@ -1,37 +1,1000 @@
-<!doctype html><html lang="bn"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><meta name="theme-color" content="#142b55"><title>RENUKA TELECOM & XEROX</title><style>
-:root{--navy:#142b55;--blue:#2456a6;--bg:#f3f6fb;--ink:#172033;--muted:#64748b;--line:#dbe3ef;--white:#fff;--green:#087443;--red:#b42318}*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font-family:system-ui,'Noto Sans Bengali',sans-serif}button,input,select,textarea{font:inherit}button{border:0;border-radius:9px;padding:10px 14px;background:var(--blue);color:white;font-weight:650;cursor:pointer}button.secondary{background:#e8eef8;color:#17345f}button.danger{background:#b42318}button:disabled{opacity:.5}.hidden{display:none!important}.login{max-width:430px;margin:8vh auto;background:#fff;padding:24px;border-radius:18px;box-shadow:0 10px 35px #142b5518}.login h1{font-size:23px;color:var(--navy)}.login label,.field{display:block;font-size:13px;font-weight:650;margin:12px 0 5px}.login input,.field input,.field select,.field textarea,input,select,textarea{width:100%;padding:11px;border:1px solid var(--line);border-radius:8px;background:white;color:var(--ink)}.muted,.hint{color:var(--muted);font-size:12px}.shell{display:grid;grid-template-columns:240px 1fr;min-height:100vh}.side{background:var(--navy);color:white;padding:18px 12px}.brand{font-weight:800;font-size:17px;padding:8px 10px 18px}.brand small{display:block;font-size:11px;opacity:.75;font-weight:400;margin-top:4px}.nav button{display:block;width:100%;text-align:left;background:transparent;color:#e7efff;margin:3px 0;padding:11px}.nav button.active,.nav button:hover{background:#ffffff20}.main{padding:20px;min-width:0}.top{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:18px}.top h1{font-size:24px;margin:0;color:var(--navy)}.cards{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:16px}.card,.panel{background:white;border:1px solid var(--line);border-radius:13px;padding:15px;margin-bottom:14px}.metric{font-size:24px;font-weight:800;margin-top:5px}.panel h2{font-size:17px;margin:0 0 12px;color:var(--navy)}.grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:12px}.tablewrap{overflow:auto}table{width:100%;border-collapse:collapse;min-width:600px;font-size:13px}th,td{padding:9px;border-bottom:1px solid var(--line);text-align:left;white-space:nowrap}th{background:#f6f8fc;color:#41516b}.empty{padding:20px;color:var(--muted);text-align:center}.notice{background:#edf4ff;border:1px solid #c9daf7;padding:12px;border-radius:10px;font-size:13px;margin-bottom:14px}.toast{position:fixed;bottom:18px;left:50%;transform:translateX(-50%);background:#142b55;color:#fff;padding:12px 16px;border-radius:10px;z-index:99;max-width:90vw}.pill{display:inline-block;padding:4px 9px;border-radius:99px;background:#e9eff9;font-size:12px}.menuToggle{display:none}.photo{width:42px;height:42px;object-fit:cover;border-radius:6px}.right{text-align:right}.split{display:flex;gap:8px;align-items:center}.split>*{flex:1}.small{font-size:12px}.dangerText{color:var(--red)}@media(max-width:850px){.shell{grid-template-columns:1fr}.side{padding:8px 10px}.brand{padding:5px 7px}.nav{display:flex;overflow:auto;gap:5px}.nav button{white-space:nowrap;width:auto;margin:0;font-size:12px;padding:9px}.main{padding:12px}.cards{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:repeat(2,minmax(0,1fr))}.top h1{font-size:19px}}@media(max-width:460px){.grid{grid-template-columns:1fr}.login{margin:4vh 12px}.metric{font-size:20px}}
-</style></head><body>
-<div id="login" class="login"><h1>📱 RENUKA TELECOM & XEROX</h1><p class="muted">DIPAKESH BERA · KAKDWIP HOSPITAL MORE</p><label>ইমেইল অথবা +91 মোবাইল নম্বর</label><input id="loginId" placeholder="লগইন ইমেইল / +91XXXXXXXXXX" autocomplete="username"><label>পাসওয়ার্ড</label><input id="password" type="password" autocomplete="current-password"><div class="actions"><button style="width:100%" onclick="login()">লগইন করুন</button><button class="secondary" style="width:100%" onclick="resetPassword()">ইমেইলে পাসওয়ার্ড রিসেট</button></div><p class="hint">আপনার Supabase Authentication-এ আগে থেকে তৈরি অ্যাকাউন্ট ব্যবহার করুন।</p></div>
-<div id="app" class="shell hidden"><aside class="side"><div class="brand">📱 RENUKA TELECOM & XEROX<small id="who"></small></div><div id="nav" class="nav"></div></aside><main class="main"><div class="top"><div><h1 id="heading">ড্যাশবোর্ড</h1><div class="muted" id="status">Cloud সংযোগ</div></div><div class="split"><span class="pill" id="role"></span><button class="secondary" onclick="logout()">লগআউট</button></div></div><div id="view"></div></main></div><div id="toast" class="toast hidden"></div>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="./app.js"></script><script>
-const $=id=>document.getElementById(id), K=['products','sales','repairs','expenses','recharges','customers','settings','approvals'];let sb,user,role='employee',data={},page='dashboard',channel=null,saveTimer=null;
-const labels={dashboard:'ড্যাশবোর্ড',products:'প্রোডাক্ট ও স্টক',sales:'নতুন বিক্রি / বিল',invoices:'বিলের তালিকা',repairs:'রিপেয়ারিং',recharges:'মোবাইল রিচার্জ',customers:'কাস্টমার ও বাকি',expenses:'খরচ',staff:'কর্মচারী',reports:'লাভ-ক্ষতি ও রিপোর্ট',backup:'ব্যাকআপ'};
-function toast(s){$('toast').textContent=s;$('toast').classList.remove('hidden');setTimeout(()=>$('toast').classList.add('hidden'),2800)}function esc(s){return String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]))}function money(n){return '₹'+Number(n||0).toLocaleString('en-IN',{maximumFractionDigits:2})}function today(){return new Date().toLocaleDateString('en-CA',{timeZone:'Asia/Kolkata'})}function arr(k){return Array.isArray(data[k])?data[k]:[]}function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
-async function init(){const c=window.RENUKA_CONFIG||{};if(!c.url||!c.key){toast('app.js-এ Supabase config নেই');return}sb=window.supabase.createClient(c.url,c.key)}init();
-async function login(){let v=$('loginId').value.trim(),p=$('password').value;if(!v||!p)return toast('ইমেইল/মোবাইল ও পাসওয়ার্ড দিন');const cred=v.includes('@')?{email:v,password:p}:{phone:v,password:p};const {data:d,error}=await sb.auth.signInWithPassword(cred);if(error)return toast('লগইন ব্যর্থ: '+error.message);user=d.user;const {data:prof,error:pe}=await sb.from('profiles').select('full_name,role,mobile').eq('id',user.id).maybeSingle();if(pe)return toast('প্রোফাইল পড়া যায়নি: '+pe.message);if(!prof){await sb.auth.signOut();return toast('এই ইউজারের profiles রেকর্ড নেই। Admin-কে যোগ করতে হবে।')}role=prof.role||'employee';user.name=prof.full_name||user.phone||user.email||'ব্যবহারকারী';await loadAll();$('login').classList.add('hidden');$('app').classList.remove('hidden');$('who').textContent=user.name;$('role').textContent=role==='admin'?'ADMIN':'EMPLOYEE';$('status').textContent='Supabase Cloud Sync সংযুক্ত';buildNav();render();subscribe();}
-async function resetPassword(){let v=$('loginId').value.trim();if(!v.includes('@'))return toast('পাসওয়ার্ড রিসেটের জন্য ইমেইল লিখুন');const {error}=await sb.auth.resetPasswordForEmail(v,{redirectTo:location.href.split('#')[0]});toast(error?'রিসেট পাঠানো যায়নি: '+error.message:'ইমেইল রিসেট লিংক পাঠানো হয়েছে। Inbox/Spam দেখুন।')}
-async function loadAll(){const {data:rows,error}=await sb.from('shop_data').select('data_key,data_value').eq('store_id','renuka-telecom');if(error)throw error;data={};(rows||[]).forEach(r=>data[r.data_key]=r.data_value);K.forEach(k=>{if(!data[k])data[k]=[]})}
-async function save(k){if(!user)return;const {error}=await sb.from('shop_data').upsert({store_id:'renuka-telecom',data_key:k,data_value:data[k],updated_by:user.id},{onConflict:'store_id,data_key'});if(error){console.error(error);toast('Cloud সেভ ব্যর্থ: '+error.message);return false}return true}
-function subscribe(){channel=sb.channel('renuka-shop-live').on('postgres_changes',{event:'*',schema:'public',table:'shop_data',filter:'store_id=eq.renuka-telecom'},async()=>{try{await loadAll();render()}catch(e){console.error(e)}}).subscribe()}
-async function logout(){if(channel)await sb.removeChannel(channel);await sb.auth.signOut();user=null;$('app').classList.add('hidden');$('login').classList.remove('hidden')}
-function buildNav(){let items=['dashboard','products','sales','invoices','repairs','recharges','customers','expenses','staff','reports','backup'];$('nav').innerHTML=items.map(k=>`<button data-page="${k}" class="${page===k?'active':''}" onclick="go('${k}')">${labels[k]}</button>`).join('')}
-function go(k){page=k;render()}function render(){ $('heading').textContent=labels[page]||page;buildNav();let fn={dashboard:dashboard,products:products,sales:sales,invoices:invoices,repairs:repairs,recharges:recharges,customers:customers,expenses:expenses,staff:staff,reports:reports,backup:backup}[page];$('view').innerHTML=fn?fn():'<div class="empty">অপশন পাওয়া যায়নি</div>' }
-function dashboard(){let s=arr('sales'),p=arr('products'),e=arr('expenses'),r=arr('recharges'),d=s.filter(x=>x.date===today()),gross=d.reduce((a,x)=>a+ +x.total,0),cost=d.reduce((a,x)=>a+ +x.cost,0);return `<div class="cards"><div class="card"><div class="muted">আজকের বিক্রি</div><div class="metric">${money(gross)}</div></div><div class="card"><div class="muted">আজকের পণ্যের লাভ</div><div class="metric">${money(gross-cost)}</div></div><div class="card"><div class="muted">মোট পণ্য / স্টক</div><div class="metric">${p.length} / ${p.reduce((a,x)=>a+ +x.qty,0)}</div></div><div class="card"><div class="muted">আজকের রিচার্জ</div><div class="metric">${r.filter(x=>x.date===today()).length}</div></div></div><div class="panel"><h2>সাম্প্রতিক বিক্রি</h2>${salesTable(s.slice(-8).reverse())}</div><div class="notice">ডেটা Supabase-এ সংরক্ষিত। একই প্রকল্পে সাইন-ইন করা ডিভাইসগুলিতে পরিবর্তন Realtime-এর মাধ্যমে দেখা যাবে।</div>`}
-function products(){return `<div class="panel"><h2>নতুন পণ্য যোগ করুন</h2><div class="grid"><label class="field">পণ্যের নাম<input id="pn"></label><label class="field">ক্যাটাগরি<select id="pc"><option>মোবাইল</option><option>অ্যাক্সেসরিজ</option><option>রিচার্জ কার্ড</option><option>অন্যান্য</option></select></label><label class="field">IMEI / Serial<input id="pi"></label><label class="field">Barcode / SKU<input id="pb"><button class="secondary" onclick="scan('pb')">বারকোড স্ক্যান</button></label><label class="field">কেনা দাম<input id="pco" type="number" min="0"></label><label class="field">বিক্রির দাম<input id="ppr" type="number" min="0"></label><label class="field">পরিমাণ<input id="pq" type="number" min="0" value="1"></label><label class="field">ছবি / ক্যামেরা<input id="photo" type="file" accept="image/*" capture="environment"></label></div><div class="actions"><button onclick="addProduct()">পণ্য সেভ করুন</button></div></div><div class="panel"><h2>স্টক তালিকা</h2><input placeholder="পণ্য / IMEI / বারকোড খুঁজুন" oninput="filterRows(this.value)"><div id="plist">${productTable(arr('products'))}</div></div>`}
-function productTable(a){if(!a.length)return '<div class="empty">কোনো পণ্য নেই</div>';return `<div class="tablewrap"><table><tr><th>পণ্য</th><th>ক্যাটাগরি</th><th>IMEI</th><th>Barcode</th><th>কেনা</th><th>বিক্রি</th><th>স্টক</th></tr>${a.map(x=>`<tr><td>${esc(x.name)}</td><td>${esc(x.cat)}</td><td>${esc(x.imei)}</td><td>${esc(x.barcode)}</td><td>${money(x.cost)}</td><td>${money(x.price)}</td><td>${x.qty}</td></tr>`).join('')}</table></div>`}
-function filterRows(q){let a=arr('products').filter(x=>(x.name+' '+x.imei+' '+x.barcode).toLowerCase().includes(q.toLowerCase()));$('plist').innerHTML=productTable(a)}
-async function uploadPhoto(file){if(!file)return '';let path=`renuka-telecom/${user.id}/${id()}-${file.name.replace(/[^a-zA-Z0-9._-]/g,'_')}`;let {error}=await sb.storage.from('renuka-shop').upload(path,file,{upsert:false,contentType:file.type});if(error)throw error;let {data:d,error:e}=await sb.storage.from('renuka-shop').createSignedUrl(path,60*60*24*365);if(e)throw e;return d.signedUrl}
-async function addProduct(){let name=$('pn').value.trim(),cost=+$('pco').value,price=+$('ppr').value,qty=+$('pq').value;if(!name||price<0||qty<0)return toast('পণ্যের নাম, দাম ও স্টক দিন');try{let photo=await uploadPhoto($('photo').files[0]);data.products.push({id:id(),name,cat:$('pc').value,imei:$('pi').value.trim(),barcode:$('pb').value.trim(),cost,price,qty,photo,created:Date.now()});if(await save('products')){render();toast('পণ্য Cloud-এ সেভ হয়েছে')}}catch(e){toast('পণ্য/ছবি সেভ হয়নি: '+e.message)}}
-function sales(){let p=arr('products');return `<div class="panel"><h2>নতুন বিক্রির বিল</h2><div class="grid"><label class="field">কাস্টমারের নাম<input id="sn" placeholder="নাম"></label><label class="field">মোবাইল<input id="sm" inputmode="numeric"></label><label class="field">পণ্য<select id="sp">${p.map(x=>`<option value="${x.id}">${esc(x.name)} (স্টক ${x.qty})</option>`).join('')}</select></label><label class="field">পরিমাণ<input id="sq" type="number" min="1" value="1"></label><label class="field">প্রতি পিস বিক্রির দাম<input id="spr" type="number" min="0"></label><label class="field">ডিসকাউন্ট<input id="sd" type="number" min="0" value="0"></label><label class="field">জমা টাকা<input id="spaid" type="number" min="0" value="0"></label><label class="field">পেমেন্ট<select id="smet"><option>Cash</option><option>UPI</option><option>Card</option><option>Bank</option></select></label></div><div class="actions"><button onclick="createSale()">বিল তৈরি ও প্রিন্ট</button></div><p class="hint">কর্মচারী ছাড়ের অনুমতি বর্তমানে অ্যাপের UI-তে সীমাবদ্ধ; ডাটাবেসে নিরাপদ Admin approval workflow এখনো সম্পূর্ণ হয়নি।</p></div>`}
-async function createSale(){let p=arr('products').find(x=>x.id===$('sp').value),qty=+$('sq').value,price=+$('spr').value||p?.price,discount=+$('sd').value,paid=+$('spaid').value;if(!p||qty<1||qty>p.qty||price<0||discount>qty*price||paid>qty*price-discount)return toast('পণ্য, স্টক, দাম বা পেমেন্ট যাচাই করুন');let total=qty*price-discount;let s={id:id(),date:today(),customer:$('sn').value||'Walk-in',phone:$('sm').value,product:p.name,productId:p.id,imei:p.imei,qty,price,discount,total,cost:qty*p.cost,paid,due:total-paid,payment:$('smet').value,soldBy:user.name,employeeId:user.id};p.qty-=qty;data.sales.push(s);if(await save('products')&&await save('sales')){render();printSale(s)}}
-function salesTable(a){if(!a.length)return '<div class="empty">বিক্রির রেকর্ড নেই</div>';return `<div class="tablewrap"><table><tr><th>তারিখ</th><th>বিল</th><th>কাস্টমার</th><th>পণ্য</th><th>পরিমাণ</th><th>মোট</th><th>জমা</th><th>বাকি</th><th>বিক্রেতা</th></tr>${a.map(x=>`<tr><td>${x.date}</td><td>${x.id}</td><td>${esc(x.customer)}</td><td>${esc(x.product)}</td><td>${x.qty}</td><td>${money(x.total)}</td><td>${money(x.paid)}</td><td>${money(x.due)}</td><td>${esc(x.soldBy)}</td></tr>`).join('')}</table></div>`}function invoices(){return `<div class="panel"><h2>বিলের তালিকা</h2>${salesTable(arr('sales').slice().reverse())}</div>`}
-function printSale(s){let w=window.open('','_blank');if(!w)return toast('প্রিন্টের জন্য পপ-আপ অনুমতি দিন');w.document.write(`<html><meta charset="utf-8"><title>Invoice</title><body style="font-family:Arial;padding:25px"><center><h2>RENUKA TELECOM & XEROX</h2>DIPAKESH BERA · KAKDWIP HOSPITAL MORE</center><hr>Bill: ${s.id}<br>Date: ${s.date}<br>Customer: ${esc(s.customer)}<br>Mobile: ${esc(s.phone)}<table border="1" cellspacing="0" cellpadding="8" width="100%"><tr><th>Product</th><th>Qty</th><th>Price</th></tr><tr><td>${esc(s.product)}</td><td>${s.qty}</td><td>${money(s.price)}</td></tr></table><p>Discount: ${money(s.discount)}<br>Total: ${money(s.total)}<br>Paid: ${money(s.paid)}<br>Due: ${money(s.due)}<br>Sold by: ${esc(s.soldBy)}</p><script>window.onload=()=>window.print()<\/script></body></html>`);w.document.close()}
-function repairs(){return `<div class="panel"><h2>রিপেয়ারিং জব কার্ড</h2><div class="grid"><label class="field">কাস্টমার<input id="rn"></label><label class="field">মোবাইল<input id="rm"></label><label class="field">ডিভাইস / মডেল<input id="rd"></label><label class="field">IMEI / Serial<input id="ri"></label><label class="field">সমস্যা<input id="rprob"></label><label class="field">চার্জ<input id="rc" type="number"></label><label class="field">জমা<input id="rp" type="number" value="0"></label><label class="field">স্ট্যাটাস<select id="rst"><option>জমা নেওয়া হয়েছে</option><option>কাজ চলছে</option><option>সম্পন্ন</option><option>ডেলিভারি হয়েছে</option></select></label></div><div class="actions"><button onclick="addRepair()">জব কার্ড সেভ</button></div></div><div class="panel"><h2>রিপেয়ারিং রেকর্ড</h2>${arr('repairs').slice().reverse().map(x=>`<p>${x.date} · ${esc(x.name)} · ${esc(x.device)} · ${money(x.charge)} · ${esc(x.status)}</p>`).join('')||'<div class="empty">রেকর্ড নেই</div>'}</div>`}async function addRepair(){let name=$('rn').value.trim(),device=$('rd').value.trim(),charge=+$('rc').value,paid=+$('rp').value;if(!name||!device||paid>charge)return toast('নাম/ডিভাইস/চার্জ যাচাই করুন');data.repairs.push({id:id(),date:today(),name,phone:$('rm').value,device,imei:$('ri').value,problem:$('rprob').value,charge,paid,status:$('rst').value,by:user.name});if(await save('repairs')){render();toast('রিপেয়ারিং রেকর্ড সেভ হয়েছে')}}
-function recharges(){return `<div class="panel"><h2>ম্যানুয়াল রিচার্জ এন্ট্রি</h2><div class="grid"><label class="field">অপারেটর<select id="ro"><option>Jio</option><option>Airtel</option><option>Vi</option><option>BSNL</option></select></label><label class="field">মোবাইল নম্বর<input id="rmob" maxlength="10" inputmode="numeric"></label><label class="field">টাকা<input id="ra" type="number" min="1"></label><label class="field">মাধ্যম<select id="rch"><option>Manual</option><option>Iconstar</option><option>Jio POS</option><option>Smart Connect</option><option>Airtel Mitra</option><option>API</option></select></label><label class="field">স্ট্যাটাস<select id="rs"><option>success</option><option>pending</option><option>failed</option></select></label><label class="field">Transaction ID<input id="rt"></label></div><div class="actions"><button onclick="addRecharge()">রিচার্জ সেভ করুন</button></div><p class="hint">এটি রিচার্জের হিসাব রাখে; অপারেটর/রিচার্জ অ্যাপের API সংযোগ আলাদা অনুমোদন ও API credentials ছাড়া চালু হবে না।</p></div><div class="panel"><h2>রিচার্জ রিপোর্ট</h2>${rechargeTable(arr('recharges'))}</div>`}function rechargeTable(a){if(!a.length)return '<div class="empty">রিচার্জ নেই</div>';return `<div class="tablewrap"><table><tr><th>তারিখ</th><th>অপারেটর</th><th>মোবাইল</th><th>টাকা</th><th>মাধ্যম</th><th>স্ট্যাটাস</th><th>কর্মী</th></tr>${a.slice().reverse().map(x=>`<tr><td>${x.date}</td><td>${x.operator}</td><td>${x.mobile}</td><td>${money(x.amount)}</td><td>${esc(x.channel)}</td><td>${x.status}</td><td>${esc(x.by)}</td></tr>`).join('')}</table></div>`}async function addRecharge(){let mobile=$('rmob').value.trim(),amount=+$('ra').value;if(!/^\d{10}$/.test(mobile)||amount<=0)return toast('১০ সংখ্যার মোবাইল ও সঠিক টাকা দিন');data.recharges.push({id:id(),date:today(),operator:$('ro').value,mobile,amount,channel:$('rch').value,status:$('rs').value,txn:$('rt').value,by:user.name});if(await save('recharges')){render();toast('রিচার্জ এন্ট্রি সেভ হয়েছে')}}
-function customers(){let m={};arr('sales').forEach(s=>{let k=s.phone||s.customer;m[k]??={name:s.customer,phone:s.phone,total:0,due:0};m[k].total+=+s.total;m[k].due+=+s.due});return `<div class="panel"><h2>কাস্টমার ও বাকি হিসাব</h2>${Object.values(m).map(x=>`<p>${esc(x.name)} · ${esc(x.phone)} · কেনাকাটা ${money(x.total)} · বাকি ${money(x.due)}</p>`).join('')||'<div class="empty">কাস্টমার নেই</div>'}</div>`}
-function expenses(){return `<div class="panel"><h2>দোকানের খরচ</h2><div class="grid"><label class="field">বিবরণ<input id="en"></label><label class="field">টাকা<input id="ea" type="number" min="1"></label><label class="field">তারিখ<input id="ed" type="date" value="${today()}"></label></div><div class="actions"><button onclick="addExpense()">খরচ সেভ</button></div></div><div class="panel"><h2>খরচের তালিকা</h2>${arr('expenses').map(x=>`<p>${x.date} · ${esc(x.name)} · ${money(x.amount)} · ${esc(x.by)}</p>`).join('')||'<div class="empty">খরচ নেই</div>'}</div>`}async function addExpense(){let name=$('en').value.trim(),amount=+$('ea').value;if(!name||amount<=0)return toast('বিবরণ ও টাকা দিন');data.expenses.push({id:id(),date:$('ed').value||today(),name,amount,by:user.name});if(await save('expenses')){render();toast('খরচ সেভ হয়েছে')}}
-function staff(){return `<div class="panel"><h2>কর্মচারী প্রোফাইল</h2><p>এই প্রকল্পে বর্তমানে Supabase profiles টেবিল থেকে লগইন করা কর্মীদের ভূমিকা পড়া হয়। নতুন কর্মী যোগ করতে Supabase Authentication-এ user তৈরি করে profiles-এ role=employee দিতে হবে।</p><p class="hint">নিরাপত্তার জন্য কর্মী অ্যাকাউন্ট তৈরির অনুমতি এখানে খোলা হয়নি।</p></div><div class="panel"><h2>কর্মচারী অনুযায়ী বিক্রি</h2>${Object.values(arr('sales').reduce((m,s)=>{m[s.soldBy]??={n:0,total:0};m[s.soldBy].n++;m[s.soldBy].total+=+s.total;return m},{})).map(x=>`<p>বিল ${x.n} · মোট ${money(x.total)}</p>`).join('')||'এখনো বিক্রি নেই'}</div>`}
-function reports(){let s=arr('sales'),e=arr('expenses'),gross=s.reduce((a,x)=>a+ +x.total,0),profit=s.reduce((a,x)=>a+ +x.total-(+x.cost),0),due=s.reduce((a,x)=>a+ +x.due,0),spent=e.reduce((a,x)=>a+ +x.amount,0);let ops={};arr('recharges').forEach(x=>ops[x.operator]=(ops[x.operator]||0)+1);return `<div class="cards"><div class="card"><div class="muted">মোট বিক্রি</div><div class="metric">${money(gross)}</div></div><div class="card"><div class="muted">পণ্যের আনুমানিক লাভ</div><div class="metric">${money(profit)}</div></div><div class="card"><div class="muted">কাস্টমারের বাকি</div><div class="metric">${money(due)}</div></div><div class="card"><div class="muted">দোকানের খরচ</div><div class="metric">${money(spent)}</div></div></div><div class="panel"><h2>হিসাবের সারাংশ</h2><p>বিক্রির মোট: ${money(gross)}</p><p>পণ্যের আনুমানিক লাভ: ${money(profit)}</p><p>খরচ বাদে আনুমানিক লাভ: <b>${money(profit-spent)}</b></p><p>মোট বাকি: ${money(due)}</p><p>রিচার্জ অপারেটরভিত্তিক: ${Object.entries(ops).map(([k,v])=>k+': '+v).join(' · ')||'কোনো রিচার্জ নেই'}</p><p class="hint">এটি সংরক্ষিত এন্ট্রির উপর ভিত্তি করে প্রাথমিক হিসাব; ক্রয় রিটার্ন, অন্যান্য আয়, কমিশন, কর ও স্টক-অ্যাডজাস্টমেন্ট এখনো পূর্ণাঙ্গ হিসাবের অংশ নয়।</p></div>`}
-function backup(){return `<div class="panel"><h2>ডেটা ব্যাকআপ / রিস্টোর</h2><p>সব Shop Data JSON ফাইলে ডাউনলোড করুন। Restore করলে বর্তমান ডেটা প্রতিস্থাপিত হবে। আগে ব্যাকআপ নিন।</p><div class="actions"><button onclick="downloadBackup()">ব্যাকআপ ডাউনলোড</button><label class="field">JSON ব্যাকআপ থেকে রিস্টোর<input id="restoreFile" type="file" accept="application/json"></label><button class="danger" onclick="restoreBackup()">রিস্টোর করুন</button></div></div>`}function downloadBackup(){let blob=new Blob([JSON.stringify({exported:new Date().toISOString(),data},null,2)],{type:'application/json'}),a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='renuka-telecom-backup-'+today()+'.json';a.click();URL.revokeObjectURL(a.href)}async function restoreBackup(){if(role!=='admin')return toast('শুধু Admin রিস্টোর করতে পারবেন');let f=$('restoreFile').files[0];if(!f)return toast('JSON ফাইল বাছুন');if(!confirm('বর্তমান ডেটা ব্যাকআপ ফাইলের ডেটা দিয়ে প্রতিস্থাপন হবে। চালাবেন?'))return;try{let j=JSON.parse(await f.text());if(!j.data||!confirm('আপনি নিশ্চিত?'))return;for(let k of K)if(j.data[k]){data[k]=j.data[k];if(!await save(k))return}render();toast('ডেটা রিস্টোর হয়েছে')}catch(e){toast('ফাইলটি সঠিক JSON নয়')}}
-async function scan(target){if(!('BarcodeDetector'in window)||!navigator.mediaDevices?.getUserMedia)return toast('এই ব্রাউজারে বারকোড ক্যামেরা সমর্থিত নয়; হাতে লিখুন');let stream;try{let detector=new BarcodeDetector();stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}});let v=document.createElement('video');v.srcObject=stream;v.setAttribute('playsinline','');await v.play();let box=document.createElement('div');box.style='position:fixed;inset:8%;z-index:999;background:#111;color:white;padding:14px;border-radius:12px';let b=document.createElement('button');b.textContent='বন্ধ';b.onclick=()=>{stream.getTracks().forEach(t=>t.stop());box.remove()};box.append(b,v);v.style='width:100%;max-height:80%';document.body.append(box);let timer=setInterval(async()=>{try{let codes=await detector.detect(v);if(codes.length){$(target).value=codes[0].rawValue;clearInterval(timer);stream.getTracks().forEach(t=>t.stop());box.remove();toast('বারকোড পড়া হয়েছে')}}catch(e){}},350)}catch(e){if(stream)stream.getTracks().forEach(t=>t.stop());toast('ক্যামেরা অনুমতি দিন এবং HTTPS ব্যবহার করুন')}}
-</script></body></html>
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Renuka Telecom & Xerox - POS & Cloud Sync (v10)</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f0f4f8; color: #1e293b; }
+        .hidden { display: none !important; }
+        
+        /* Login Screen */
+        #login-screen { min-height: 100vh; display: flex; align-items: center; justify-content: center; background: linear-gradient(135deg, #1e3a8a, #3b82f6); padding: 15px; }
+        .login-box { background: white; padding: 28px; border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.2); width: 100%; max-width: 420px; }
+        .login-header { text-align: center; margin-bottom: 20px; }
+        .login-header h1 { color: #1e3a8a; font-size: 22px; font-weight: 800; }
+        .login-header p { font-size: 12px; color: #475569; margin-top: 3px; }
+        
+        .form-group { margin-bottom: 14px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #334155; }
+        .form-control { width: 100%; padding: 10px 12px; border: 1.5px solid #cbd5e1; border-radius: 8px; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: #2563eb; }
+        
+        .btn { padding: 10px 16px; border: none; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+        .btn-primary { background: #2563eb; color: white; width: 100%; }
+        .btn-primary:hover { background: #1d4ed8; }
+        .btn-success { background: #16a34a; color: white; }
+        .btn-success:hover { background: #15803d; }
+        .btn-danger { background: #dc2626; color: white; }
+        .btn-warning { background: #f59e0b; color: #000; }
+        .btn-info { background: #0284c7; color: white; }
+        .btn-dark { background: #334155; color: white; }
+
+        /* Top Header */
+        header { background: #1e3a8a; color: white; padding: 12px 16px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px; }
+        .shop-title h2 { font-size: 17px; font-weight: 800; }
+        .shop-title p { font-size: 11px; color: #bfdbfe; }
+        .header-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: 700; }
+        .badge-user { background: #facc15; color: #000; }
+        
+        /* Sync Status Bar */
+        #sync-status-bar { background: #dbeafe; color: #1e40af; padding: 8px 16px; font-size: 12px; font-weight: 700; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #bfdbfe; }
+        
+        /* Navigation */
+        nav { background: white; display: flex; overflow-x: auto; border-bottom: 1px solid #e2e8f0; position: sticky; top: 0; z-index: 20; }
+        .nav-btn { padding: 12px 16px; background: none; border: none; border-bottom: 3px solid transparent; font-size: 13px; font-weight: 600; color: #64748b; cursor: pointer; white-space: nowrap; }
+        .nav-btn.active { border-bottom-color: #2563eb; color: #2563eb; font-weight: 700; }
+
+        /* Container & Cards */
+        .container { max-width: 1200px; margin: 16px auto; padding: 0 12px; }
+        .card { background: white; border-radius: 12px; padding: 16px; box-shadow: 0 2px 8px rgba(0,0,0,0.06); margin-bottom: 16px; }
+        .card-title { font-size: 16px; font-weight: 700; color: #1e3a8a; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 1px solid #e2e8f0; }
+
+        /* Grid Layouts */
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
+        .pos-layout { display: grid; grid-template-columns: 1.8fr 1.2fr; gap: 16px; }
+        @media (max-width: 850px) { .pos-layout { grid-template-columns: 1fr; } }
+
+        /* Product Cards in POS */
+        .cat-bar { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 10px; }
+        .cat-pill { padding: 5px 12px; border-radius: 20px; border: 1px solid #cbd5e1; background: #f8fafc; font-size: 12px; font-weight: 600; cursor: pointer; white-space: nowrap; }
+        .cat-pill.active { background: #2563eb; color: white; border-color: #2563eb; }
+        
+        .prod-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 10px; max-height: 480px; overflow-y: auto; }
+        .prod-card { border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 8px; text-align: center; cursor: pointer; background: #fff; transition: 0.15s; }
+        .prod-card:hover { border-color: #2563eb; background: #eff6ff; transform: translateY(-2px); }
+        .prod-card img { width: 100%; height: 85px; object-fit: cover; border-radius: 6px; margin-bottom: 6px; background: #f1f5f9; }
+        .prod-card h4 { font-size: 12px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+        .prod-card .price { color: #16a34a; font-weight: 800; font-size: 14px; margin-top: 3px; }
+        .prod-card .stock { font-size: 10px; color: #64748b; }
+
+        /* Tables */
+        .table-wrap { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+        th { background: #f1f5f9; padding: 10px; font-size: 11px; text-transform: uppercase; color: #475569; }
+        td { padding: 10px; border-bottom: 1px solid #e2e8f0; vertical-align: middle; }
+        .thumb { width: 45px; height: 45px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; }
+
+        /* Input with Camera Button */
+        .input-group { display: flex; gap: 6px; }
+        .imei-box { background: #eff6ff; border: 1px solid #bfdbfe; padding: 12px; border-radius: 8px; margin-bottom: 12px; }
+
+        /* Print Styling */
+        @media print {
+            @page { size: A4; margin: 12mm; }
+            body * { visibility: hidden !important; }
+            #bill-card, #bill-card * { visibility: visible !important; }
+            #bill-card {
+                position: absolute; left: 0; top: 0; width: 100%;
+                max-width: 100%; box-shadow: none !important; border: 1px solid #cbd5e1 !important;
+                border-radius: 10px !important; padding: 18px !important; margin: 0 !important;
+                color: #111827 !important; background: #fff !important;
+            }
+            #bill-card .no-print { display: none !important; }
+            #bill-card .table-wrap { max-height: none !important; overflow: visible !important; }
+            #bill-card table { width: 100%; border-collapse: collapse; }
+            #bill-card th { background: #eff6ff !important; color: #1e3a8a !important; border-bottom: 1px solid #94a3b8; }
+            #bill-card td { border-bottom: 1px solid #e2e8f0; }
+            #bill-card input { border: none !important; background: transparent !important; color: #111827 !important; padding: 0 !important; width: auto !important; font: inherit !important; }
+            #bill-card textarea { display: none !important; }
+            #bill-card #bill-customer-print, #bill-card #bill-description-print { display: block !important; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ==================== 1. LOGIN SCREEN ==================== -->
+    <div id="login-screen">
+        <div class="login-box">
+            <div class="login-header">
+                <h1>RENUKA TELECOM</h1>
+                <p>& XEROX & SERVICE CENTER</p>
+                <p><strong>Pro: DIPAKESH BERA</strong> | Kakdwip Hospital More, Pin-743347</p>
+                <p style="color:#2563eb; font-weight:700;">Mob: 9564927202</p>
+                <p style="font-size:11px;color:#64748b;margin-top:6px;">নিরাপদ HTTPS ওয়েব অ্যাপ — localhost প্রয়োজন নেই</p>
+            </div>
+
+            <div class="form-group">
+                <label>☁️ ক্লাউড সিঙ্ক আইডি (মোবাইল ও ল্যাপটপে একই রাখুন)</label>
+                <input type="text" id="sync-id-input" class="form-control" value="renuka9564927202@gmail.com" placeholder="আপনার ইমেইল বা আইডি দিন">
+            </div>
+
+            <div class="form-group">
+                <label>ইউজার সিলেক্ট করুন (Select Role)</label>
+                <select id="login-role" class="form-control">
+                    <option value="owner">Owner (মালিক - Dipakesh Bera)</option>
+                    <option value="staff1">Staff 1 (কর্মচারী ১)</option>
+                    <option value="staff2">Staff 2 (কর্মচারী ২)</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>পাসওয়ার্ড (Password)</label>
+                <input type="password" id="login-password" class="form-control" placeholder="পাসওয়ার্ড লিখুন">
+            </div>
+
+            <button onclick="loginUser()" class="btn btn-primary">🔐 লগইন করুন</button>
+            <button onclick="sendCloudPasswordReset()" class="btn btn-info" style="width:100%; margin-top:8px;">✉️ ক্লাউড পাসওয়ার্ড ভুলে গেছেন? রিসেট লিংক পাঠান</button>
+            <p id="login-error" style="color:#dc2626; font-size:13px; text-align:center; margin-top:8px;" class="hidden">ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।</p>
+            <p style="font-size:11px; color:#64748b; text-align:center; margin-top:12px;">
+                ডিফল্ট পাসওয়ার্ড: Owner (<b>admin123</b>) | Staff 1 (<b>staff123</b>) | Staff 2 (<b>staff456</b>)
+            </p>
+        </div>
+    </div>
+
+    <!-- ==================== 2. MAIN APP ==================== -->
+    <div id="main-app" class="hidden">
+        <header class="no-print">
+            <div class="shop-title">
+                <h2>RENUKA TELECOM & XEROX & SERVICE CENTER</h2>
+                <p>Pro: DIPAKESH BERA | Kakdwip Hospital More, South 24 Pgs, 743347 | Mo: 9564927202</p>
+            </div>
+            <div class="header-actions">
+                <button onclick="forceCloudSync(true)" class="btn btn-info" style="padding:6px 12px; font-size:12px;">🔄 এখনই সিঙ্ক করুন</button>
+                <span id="user-badge" class="badge badge-user"></span>
+                <button onclick="logoutUser()" class="btn btn-danger" style="padding:6px 12px; font-size:12px;">লগআউট</button>
+            </div>
+        </header>
+
+        <div id="sync-status-bar" class="no-print">
+            <span id="sync-msg">⏳ ক্লাউড স্ট্যাটাস চেক করা হচ্ছে...</span>
+            <span id="active-id-display" style="font-size:11px;"></span>
+        </div>
+
+        <nav class="no-print">
+            <button onclick="openTab('pos')" id="btn-pos" class="nav-btn active">🧾 বিলিং (POS)</button>
+            <button onclick="openTab('inventory')" id="btn-inventory" class="nav-btn">📦 প্রোডাক্ট ও স্টক</button>
+            <button onclick="openTab('purchase')" id="btn-purchase" class="nav-btn">🛒 ক্রয় (Purchase)</button>
+            <button onclick="openTab('sales')" id="btn-sales" class="nav-btn">📊 সেলস ও প্রফিট রিপোর্ট</button>
+            <button onclick="openTab('recharge')" id="btn-recharge" class="nav-btn">📱 রিচার্জ হিসাব</button>
+            <button onclick="openTab('repair')" id="btn-repair" class="nav-btn">🛠️ সার্ভিস / রিপেয়ার</button>
+            <button onclick="openTab('expenses')" id="btn-expenses" class="nav-btn owner-only">💸 খরচের হিসাব</button>
+            <button onclick="openTab('sync')" id="btn-sync" class="nav-btn">📲 মোবাইল-ল্যাপটপ সিঙ্ক</button>
+            <button onclick="openTab('settings')" id="btn-settings" class="nav-btn owner-only">⚙️ সেটিংস ও পাসওয়ার্ড</button>
+        </nav>
+
+        <div class="container">
+
+            <!-- TAB 1: POS BILLING -->
+            <div id="tab-pos" class="pos-layout">
+                <div class="card no-print">
+                    <div class="input-group" style="margin-bottom:10px;">
+                        <input type="text" id="pos-search" onkeyup="renderPOS()" class="form-control" placeholder="প্রোডাক্টের নাম, কোড বা IMEI লিখুন...">
+                        <label class="btn btn-dark" style="cursor:pointer; white-space:nowrap;">
+                            ▦ বারকোড স্ক্যান
+                            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="scanBarcodeFromPhoto(event, 'pos-search')">
+                        </label>
+                        <label class="btn btn-info" style="cursor:pointer; white-space:nowrap;">
+                            📸 বিক্রির সময় ক্যামেরা
+                            <input type="file" accept="image/*" capture="environment" class="hidden" onchange="matchProductFromPhoto(event)">
+                        </label>
+                        <label class="btn btn-dark" style="cursor:pointer; white-space:nowrap;">
+                            🖼️ গ্যালারি থেকে পণ্য খুঁজুন
+                            <input type="file" accept="image/*" class="hidden" onchange="matchProductFromPhoto(event)">
+                        </label>
+                        <img id="sale-photo-preview" alt="বিক্রির ছবির প্রিভিউ" style="display:none;width:58px;height:58px;object-fit:contain;border:1px solid #cbd5e1;border-radius:7px;background:#f8fafc;">
+                    </div>
+                    <div class="cat-bar" id="pos-cat-bar">
+                        <button onclick="setPOSCat('All', this)" class="cat-pill active">সব (All)</button>
+                        <button onclick="setPOSCat('Mobile', this)" class="cat-pill">Mobile</button>
+                        <button onclick="setPOSCat('Charger', this)" class="cat-pill">Charger</button>
+                        <button onclick="setPOSCat('Data Cable', this)" class="cat-pill">Data Cable</button>
+                        <button onclick="setPOSCat('Earphone/Neckband', this)" class="cat-pill">Earphone/Neckband</button>
+                        <button onclick="setPOSCat('Tempered Glass', this)" class="cat-pill">Tempered Glass</button>
+                        <button onclick="setPOSCat('Back Cover', this)" class="cat-pill">Back Cover</button>
+                        <button onclick="setPOSCat('Power Bank', this)" class="cat-pill">Power Bank</button>
+                        <button onclick="setPOSCat('Memory/Pendrive', this)" class="cat-pill">Memory/Pendrive</button>
+                        <button onclick="setPOSCat('Xerox/Service', this)" class="cat-pill">Xerox & Service</button>
+                    </div>
+
+                    <div id="pos-grid" class="prod-grid"></div>
+                </div>
+
+                <!-- Right Side: Invoice / Bill -->
+                <div class="card" id="bill-card">
+                    <div style="text-align:center; border-bottom:2px solid #1e3a8a; padding:12px 8px 10px; margin-bottom:12px; background:linear-gradient(180deg,#eff6ff,#ffffff); border-radius:8px 8px 0 0;">
+                        <p style="font-size:10px; letter-spacing:2px; color:#64748b; font-weight:700;">CASH MEMO</p>
+                        <h3 style="color:#1e3a8a; font-size:16px;">RENUKA TELECOM & XEROX</h3>
+                        <p style="font-size:11px; color:#475569;">Pro: Dipakesh Bera | Kakdwip Hospital More | Mo: 9564927202</p>
+                        <p id="bill-date" style="font-size:11px; color:#334155; margin-top:5px; font-weight:600;"></p>
+                        <p style="font-size:10px;color:#64748b;margin-top:3px;">বিক্রিত পণ্য ফেরত / পরিবর্তনের জন্য বিল সঙ্গে আনুন</p>
+                    </div>
+                    <div style="display:flex;justify-content:space-between;gap:8px;margin:0 0 10px;padding:7px 9px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:6px;font-size:11px;">
+                        <span>বিল নং: <b id="bill-number">নতুন</b></span>
+                        <span>তারিখ: <b id="bill-date-short">—</b></span>
+                    </div>
+
+                    <div class="grid-2 no-print" style="margin-bottom:10px;">
+                        <input type="text" id="cust-name" class="form-control" placeholder="কাস্টমারের নাম">
+                        <input type="text" id="cust-phone" class="form-control" placeholder="মোবাইল নম্বর">
+                    </div>
+                    <p id="bill-customer-print" style="display:none;font-size:12px;margin:0 0 10px;color:#334155;"></p>
+
+                    <div class="table-wrap" style="max-height:280px; overflow-y:auto;">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>আইটেম</th>
+                                    <th>দাম</th>
+                                    <th>সংখ্যা</th>
+                                    <th class="no-print"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="cart-body"></tbody>
+                        </table>
+                    </div>
+
+                    <div style="margin-top:12px;padding:10px;border:1px dashed #94a3b8;border-radius:7px;">
+                        <label for="bill-description" style="font-size:11px;font-weight:700;color:#334155;">ওয়ারেন্টি / গ্যারান্টি / পণ্যের বিবরণ ও শর্ত</label>
+                        <textarea id="bill-description" class="form-control" rows="3" placeholder="যেমন: ১ বছরের ওয়ারেন্টি, সার্ভিস শর্ত, পণ্য ফেরতের নিয়ম..." style="margin-top:5px;font-size:12px;"></textarea>
+                        <p id="bill-description-print" style="display:none;white-space:pre-wrap;font-size:11px;margin-top:5px;color:#334155;"></p>
+                    </div>
+                    <div style="border-top:2px solid #e2e8f0; margin-top:12px; padding-top:10px;">
+                        <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:800; margin-bottom:12px;">
+                            <span>সর্বমোট বিল:</span>
+                            <span style="color:#1e3a8a;">₹<span id="cart-total">0</span></span>
+                        </div>
+                        <div class="grid-2 no-print">
+                            <button onclick="clearCart()" class="btn btn-dark">ক্লিয়ার করুন</button>
+                            <button onclick="checkoutBill()" class="btn btn-success">✅ বিল সেভ ও প্রিন্ট</button>
+                        </div>
+                        <div style="display:flex;justify-content:space-between;gap:24px;margin-top:58px;padding:0 8px 8px;font-size:11px;color:#334155;">
+                            <div style="width:42%;text-align:center;">
+                                <div style="border-top:1px solid #475569;padding-top:6px;">কাস্টমারের সই</div>
+                            </div>
+                            <div style="width:42%;text-align:center;">
+                                <div style="border-top:1px solid #475569;padding-top:6px;font-weight:700;">দোকানদারের সই</div>
+                                <div style="font-size:10px;color:#64748b;margin-top:2px;">RENUKA TELECOM & XEROX</div>
+                            </div>
+                        </div>
+                        <p style="text-align:center;font-size:10px;color:#64748b;margin-top:10px;border-top:1px dashed #cbd5e1;padding-top:8px;">আপনার কেনাকাটার জন্য ধন্যবাদ। আবার আসবেন।</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 2: INVENTORY -->
+            <div id="tab-inventory" class="hidden">
+                <div class="card">
+                    <div class="card-title">➕ নতুন প্রোডাক্ট যুক্ত করুন (ক্যামেরা ও বারকোড সহ)</div>
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label>ক্যাটাগরি (Category)</label>
+                            <select id="p-cat" onchange="toggleIMEI()" class="form-control">
+                                <option value="Mobile">Mobile (মোবাইল ফোন)</option>
+                                <option value="Charger">Charger (চার্জার)</option>
+                                <option value="Data Cable">Data Cable (ডেটা কেবল)</option>
+                                <option value="Earphone/Neckband">Earphone / Neckband</option>
+                                <option value="Tempered Glass">Tempered Glass (গ্লাস)</option>
+                                <option value="Back Cover">Back Cover (কভার)</option>
+                                <option value="Power Bank">Power Bank</option>
+                                <option value="Memory/Pendrive">Memory Card / Pendrive</option>
+                                <option value="Xerox/Service">Xerox & Service Charge</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>প্রোডাক্টের নাম / মডেল</label>
+                            <input type="text" id="p-name" class="form-control" placeholder="যেমন: Redmi 13C / 33W Charger">
+                        </div>
+
+                        <div class="form-group">
+                            <label>প্রোডাক্ট কোড / বারকোড</label>
+                            <div class="input-group">
+                                <input type="text" id="p-code" class="form-control" placeholder="কোড বা স্ক্যান করুন">
+                                <label class="btn btn-info" style="cursor:pointer;">
+                                    ▦ বারকোড স্ক্যান
+                                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="scanBarcodeFromPhoto(event, 'p-code')">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="imei-section" class="imei-box grid-2">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>IMEI নম্বর ১ (IMEI 1)</label>
+                            <div class="input-group">
+                                <input type="text" id="p-imei1" class="form-control" placeholder="15 ডিজিটের IMEI 1">
+                                <label class="btn btn-primary" style="width:auto; cursor:pointer;">
+                                    📷 স্ক্যান
+                                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="scanBarcodeFromPhoto(event, 'p-imei1')">
+                                </label>
+                            </div>
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>IMEI নম্বর ২ (IMEI 2)</label>
+                            <div class="input-group">
+                                <input type="text" id="p-imei2" class="form-control" placeholder="15 ডিজিটের IMEI 2">
+                                <label class="btn btn-primary" style="width:auto; cursor:pointer;">
+                                    📷 স্ক্যান
+                                    <input type="file" accept="image/*" capture="environment" class="hidden" onchange="scanBarcodeFromPhoto(event, 'p-imei2')">
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid-3">
+                        <div class="form-group">
+                            <label>কেনা দাম (Purchase Price ₹)</label>
+                            <input type="number" id="p-buy" class="form-control" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>বিক্রয় মূল্য (Selling Price ₹)</label>
+                            <input type="number" id="p-sell" class="form-control" placeholder="0">
+                        </div>
+                        <div class="form-group">
+                            <label>স্টক সংখ্যা (Quantity)</label>
+                            <input type="number" id="p-qty" class="form-control" value="1">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label>প্রোডাক্টের ছবি তুলুন (ক্যামেরা / গ্যালারি)</label>
+                        <div style="display:flex; flex-wrap:wrap; align-items:center; gap:10px;">
+                            <label class="btn btn-info" style="cursor:pointer;">
+                                📸 ক্যামেরা ওপেন করুন
+                                <input type="file" accept="image/*" capture="environment" class="hidden" onchange="handleProductPhoto(event)">
+                            </label>
+                            <label class="btn btn-dark" style="cursor:pointer;">
+                                🖼️ গ্যালারি থেকে নিন
+                                <input type="file" accept="image/*" class="hidden" onchange="handleProductPhoto(event)">
+                            </label>
+                            <img id="p-preview" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='60' height='60'><rect width='60' height='60' fill='%23e2e8f0'/><text x='12' y='35' font-size='11' fill='%2364748b'>Photo</text></svg>" class="thumb">
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="border:1px dashed #94a3b8;border-radius:10px;padding:10px;">
+                        <label>📷 পণ্যের চার পাশের ছবি (বিক্রির সময় যেকোনো পাশ দিয়ে খুঁজবে)</label>
+                        <div class="grid-2">
+                            <div><small>সামনের দিক</small><button type="button" class="btn btn-info" onclick="startSideCamera('product','front')">📷 ক্যামেরায় তুলুন</button><img id="p-side-front" class="thumb" style="display:none"></div>
+                            <div><small>পেছনের দিক</small><button type="button" class="btn btn-info" onclick="startSideCamera('product','back')">📷 ক্যামেরায় তুলুন</button><img id="p-side-back" class="thumb" style="display:none"></div>
+                            <div><small>বাম দিক</small><button type="button" class="btn btn-info" onclick="startSideCamera('product','left')">📷 ক্যামেরায় তুলুন</button><img id="p-side-left" class="thumb" style="display:none"></div>
+                            <div><small>ডান দিক</small><button type="button" class="btn btn-info" onclick="startSideCamera('product','right')">📷 ক্যামেরায় তুলুন</button><img id="p-side-right" class="thumb" style="display:none"></div>
+                        </div>
+                        <small style="color:#64748b">চারটি ছবিই ঐচ্ছিক, তবে ভালোভাবে শনাক্ত করতে চার পাশের ছবিই তুলুন।</small>
+                    </div>
+                    <button onclick="saveProduct()" class="btn btn-success" style="width:100%; padding:12px;">💾 প্রোডাক্ট সেভ ও ক্লাউড আপলোড করুন</button>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">📋 বর্তমান স্টক তালিকা (Live Stock)</div>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>ছবি</th>
+                                    <th>কোড / IMEI</th>
+                                    <th>নাম ও ক্যাটাগরি</th>
+                                    <th class="owner-only">কেনা দাম</th>
+                                    <th>বিক্রয় দাম</th>
+                                    <th>স্টক</th>
+                                    <th class="owner-only">ডিলিট</th>
+                                </tr>
+                            </thead>
+                            <tbody id="inv-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: PURCHASE MANAGEMENT -->
+            <div id="tab-purchase" class="hidden">
+                <div class="card">
+                    <div class="card-title">🛒 নতুন মাল ক্রয় / Purchase Entry</div>
+                    <div class="grid-3">
+                        <div class="form-group"><label>প্রোডাক্ট নির্বাচন</label><select id="buy-product" class="form-control" onchange="syncPurchaseProductCode()"><option value="">প্রোডাক্ট নির্বাচন করুন</option></select></div>
+                        <div class="form-group"><label>প্রোডাক্ট কোড / বারকোড (Product Code)</label><div class="input-group"><input id="buy-code" class="form-control" placeholder="প্রোডাক্ট কোড লিখুন" list="buy-code-list" onchange="selectPurchaseProductByCode()"><label class="btn btn-info" style="cursor:pointer;white-space:nowrap;">📷 স্ক্যান<input type="file" accept="image/*" capture="environment" class="hidden" onchange="scanBarcodeFromPhoto(event, 'buy-code')"></label></div><datalist id="buy-code-list"></datalist></div>
+                        <div class="form-group"><label>সরবরাহকারী / দোকানের নাম</label><input id="buy-supplier" class="form-control" placeholder="সাপ্লায়ারের নাম"></div>
+                        <div class="form-group"><label>ইনভয়েস / বিল নম্বর</label><input id="buy-invoice" class="form-control" placeholder="বিল নম্বর (ঐচ্ছিক)"></div>
+                        <div class="form-group"><label>ক্রয়ের তারিখ</label><input type="date" id="buy-date" class="form-control"></div>
+                        <div class="form-group"><label>পরিমাণ (Quantity)</label><input type="number" min="1" step="1" id="buy-qty" class="form-control" value="1"></div>
+                        <div class="form-group"><label>প্রতি পিস ক্রয় মূল্য (₹)</label><input type="number" min="0" step="0.01" id="buy-rate" class="form-control" placeholder="0.00"></div>
+                    </div>
+                    <div class="imei-box grid-2" style="margin-top:10px;">
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>IMEI নম্বর ১ (IMEI 1)</label>
+                            <input type="text" id="buy-imei1" class="form-control" placeholder="15 ডিজিটের IMEI 1">
+                        </div>
+                        <div class="form-group" style="margin-bottom:0;">
+                            <label>IMEI নম্বর ২ (IMEI 2)</label>
+                            <input type="text" id="buy-imei2" class="form-control" placeholder="15 ডিজিটের IMEI 2">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label>ক্রয় করা পণ্যের ছবি (ঐচ্ছিক)</label>
+                        <div style="display:flex;flex-wrap:wrap;align-items:center;gap:10px;">
+                            <label class="btn btn-info" style="cursor:pointer;">📸 ক্যামেরা দিয়ে ছবি তুলুন<input type="file" accept="image/*" capture="environment" class="hidden" onchange="handlePurchasePhoto(event)"></label>
+                            <img id="buy-photo-preview" src="" alt="ক্রয় পণ্যের ছবি" style="display:none;width:76px;height:76px;object-fit:contain;background:#f8fafc;border:1px solid #cbd5e1;border-radius:8px;">
+                            <button type="button" class="btn btn-light" onclick="clearPurchasePhoto()">ছবি মুছুন</button>
+                        </div>
+                        <small style="color:#64748b;">ছবিটি নির্বাচিত প্রোডাক্টের সঙ্গে যুক্ত হবে। ক্রয় সেভ করলে স্টক বাড়বে।</small>
+                    </div>
+                    <div class="form-group" style="border:1px dashed #94a3b8;border-radius:10px;padding:10px;">
+                        <label>📷 ক্রয় করা পণ্যের চার পাশের ছবি যুক্ত করুন</label>
+                        <div class="grid-2">
+                            <div><small>সামনের দিক</small><button type="button" class="btn btn-info" onclick="startSideCamera('purchase','front')">📷 ক্যামেরায় তুলুন</button><img id="buy-side-front" class="thumb" style="display:none"></div>
+                            <div><small>পেছনের দিক</small><button type="button" class="btn btn-info" onclick="startSideCamera('purchase','back')">📷 ক্যামেরায় তুলুন</button><img id="buy-side-back" class="thumb" style="display:none"></div>
+                            <div><small>বাম দিক</small><button type="button" class="btn btn-info" onclick="startSideCamera('purchase','left')">📷 ক্যামেরায় তুলুন</button><img id="buy-side-left" class="thumb" style="display:none"></div>
+                            <div><small>ডান দিক</small><button type="button" class="btn btn-info" onclick="startSideCamera('purchase','right')">📷 ক্যামেরায় তুলুন</button><img id="buy-side-right" class="thumb" style="display:none"></div>
+                        </div>
+                    </div>
+                    <div class="form-group"><label>নোট (ঐচ্ছিক)</label><input id="buy-note" class="form-control" placeholder="অতিরিক্ত তথ্য"></div>
+                    <button onclick="savePurchase()" class="btn btn-success" style="width:100%; padding:12px;">💾 ক্রয় সেভ করুন ও স্টক বাড়ান</button>
+                    <p style="font-size:11px;color:#64748b;margin-top:8px;">ক্রয় সেভ হলে নির্বাচিত প্রোডাক্টের স্টক স্বয়ংক্রিয়ভাবে বাড়বে এবং ক্রয়ের হিসাব সিঙ্ক হবে।</p>
+                </div>
+                <div class="card">
+                    <div class="card-title">📋 ক্রয়ের ইতিহাস (Purchase History)</div>
+                    <div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>প্রোডাক্ট</th><th>প্রোডাক্ট কোড</th><th>সরবরাহকারী</th><th>বিল নম্বর</th><th>পরিমাণ</th><th>দর</th><th>মোট</th><th>এন্ট্রি করেছেন</th></tr></thead><tbody id="purchase-body"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- TAB 3: SALES & PROFIT REPORT -->
+            <div id="tab-sales" class="hidden">
+                <div class="grid-3">
+                    <div class="card" style="border-left:4px solid #2563eb;">
+                        <p style="font-size:12px; color:#64748b;">মোট বিক্রি (Total Sales)</p>
+                        <h2 style="color:#1e3a8a; font-size:24px;">₹<span id="stat-sales">0</span></h2>
+                    </div>
+                    <div class="card owner-only" style="border-left:4px solid #f59e0b;">
+                        <p style="font-size:12px; color:#64748b;">মোট কেনা খরচ (Total Cost)</p>
+                        <h2 style="color:#b45309; font-size:24px;">₹<span id="stat-cost">0</span></h2>
+                    </div>
+                    <div class="card owner-only" style="border-left:4px solid #16a34a;">
+                        <p style="font-size:12px; color:#64748b;">নিট লাভ (Net Profit)</p>
+                        <h2 style="color:#15803d; font-size:24px;">₹<span id="stat-profit">0</span></h2>
+                    </div>
+                    <div class="card owner-only" style="border-left:4px solid #0d9488;">
+                        <p style="font-size:12px; color:#64748b;">মোট লাভ (Total Profit)</p>
+                        <h2 style="color:#0f766e; font-size:24px;">₹<span id="stat-gross-profit">0</span></h2>
+                    </div>
+                    <div class="card owner-only" style="border-left:4px solid #dc2626;">
+                        <p style="font-size:12px; color:#64748b;">মোট লস (Total Loss)</p>
+                        <h2 style="color:#dc2626; font-size:24px;">₹<span id="stat-loss">0</span></h2>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-title">🧾 বিক্রয় ইতিহাস (Sales History)</div>
+                    <div class="grid-2" style="margin-bottom:12px;">
+                        <div>
+                            <label for="sales-date-filter">তারিখ অনুযায়ী</label>
+                            <input type="date" id="sales-date-filter" class="form-control" onchange="renderSales()">
+                        </div>
+                        <div>
+                            <label for="sales-staff-filter">বিক্রেতা অনুযায়ী</label>
+                            <select id="sales-staff-filter" class="form-control" onchange="renderSales()">
+                                <option value="all">সকল (Owner ও Staff)</option>
+                                <option value="OWNER">Owner – Dipakesh Bera</option>
+                                <option value="STAFF1">Staff 1</option>
+                                <option value="STAFF2">Staff 2</option>
+                            </select>
+                        </div>
+                    </div>
+                    <p id="sales-filter-summary" style="font-size:12px;color:#475569;margin-bottom:8px;"></p>
+                    <button onclick="printDatewiseSales()" class="btn btn-primary no-print" style="margin-bottom:10px;">🖨️ নির্বাচিত তারিখের বিক্রির তালিকা প্রিন্ট</button>
+                    <div class="table-wrap">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>তারিখ ও সময়</th>
+                                    <th>কাস্টমার</th>
+                                    <th>বিক্রিত আইটেম</th>
+                                    <th>মোট বিল</th>
+                                    <th class="owner-only">লাভ (Profit)</th>
+                                    <th>বিক্রেতা</th>
+                                    <th>বিল কপি</th>
+                                </tr>
+                            </thead>
+                            <tbody id="sales-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 4: RECHARGE REGISTER -->
+            <div id="tab-recharge" class="hidden">
+                <div class="card">
+                    <div class="card-title">📱 মোবাইল রিচার্জ এন্ট্রি (API / Manual)</div>
+                    <div class="grid-3">
+                        <div class="form-group"><label>কোম্পানি</label><select id="rch-company" class="form-control"><option>Jio</option><option>Airtel</option><option>Vi</option><option>BSNL</option><option>অন্যান্য</option></select></div>
+                        <div class="form-group"><label>মোবাইল নম্বর</label><input id="rch-mobile" class="form-control" inputmode="numeric" maxlength="15" placeholder="গ্রাহকের নম্বর"></div>
+                        <div class="form-group"><label>রিচার্জের পরিমাণ (₹)</label><input id="rch-amount" class="form-control" type="number" min="1" step="0.01" placeholder="যেমন 299"></div>
+                        <div class="form-group"><label>রিচার্জ পদ্ধতি</label><select id="rch-mode" class="form-control"><option value="Manual">Manual</option><option value="API">API</option><option value="Iconstar">Iconstar</option><option value="Jio POS">Jio POS</option><option value="Airtel Mitra">Airtel Mitra</option><option value="Smart Connect">Smart Connect</option></select></div>
+                        <div class="form-group"><label>ট্রানজ্যাকশন / রেফারেন্স ID</label><input id="rch-ref" class="form-control" placeholder="ঐচ্ছিক"></div>
+                        <div class="form-group"><label>তারিখ</label><input id="rch-date" type="date" class="form-control"></div>
+                    </div>
+                    <button class="btn btn-success" onclick="saveRecharge()">💾 রিচার্জ সেভ করুন</button>
+                </div>
+                <div class="card"><div class="card-title">📊 কোম্পানি অনুযায়ী রিচার্জ রিপোর্ট</div><div id="recharge-summary" class="grid-3"></div>
+                    <div class="grid-2" style="margin:12px 0"><div><label>তারিখ ফিল্টার</label><input id="rch-filter-date" type="date" class="form-control" onchange="renderRecharge()"></div><div><label>কোম্পানি ফিল্টার</label><select id="rch-filter-company" class="form-control" onchange="renderRecharge()"><option value="all">সব কোম্পানি</option><option>Jio</option><option>Airtel</option><option>Vi</option><option>BSNL</option><option>অন্যান্য</option></select></div></div>
+                    <div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>কোম্পানি</th><th>মোবাইল</th><th>টাকা</th><th>পদ্ধতি</th><th>রেফারেন্স</th><th>এন্ট্রি</th></tr></thead><tbody id="recharge-body"></tbody></table></div>
+                </div>
+            </div>
+
+            <!-- TAB 5: REPAIR / SERVICE REGISTER -->
+            <div id="tab-repair" class="hidden">
+                <div class="card"><div class="card-title">🛠️ রিপেয়ার / সার্ভিস কাজের এন্ট্রি</div>
+                    <div class="grid-3">
+                        <div class="form-group"><label>কাস্টমারের নাম</label><input id="rep-customer" class="form-control"></div>
+                        <div class="form-group"><label>মোবাইল নম্বর</label><input id="rep-phone" class="form-control" inputmode="numeric"></div>
+                        <div class="form-group"><label>ডিভাইস / মডেল</label><input id="rep-device" class="form-control" placeholder="যেমন Redmi Note 12"></div>
+                        <div class="form-group"><label>IMEI / সিরিয়াল নম্বর</label><input id="rep-imei" class="form-control"></div>
+                        <div class="form-group"><label>সমস্যা / কাজের বিবরণ</label><input id="rep-issue" class="form-control"></div>
+                        <div class="form-group"><label>সার্ভিস চার্জ (₹)</label><input id="rep-charge" type="number" min="0" step="0.01" class="form-control" value="0"></div>
+                        <div class="form-group"><label>পার্টস / খরচ (₹)</label><input id="rep-cost" type="number" min="0" step="0.01" class="form-control" value="0"></div>
+                        <div class="form-group"><label>স্ট্যাটাস</label><select id="rep-status" class="form-control"><option>জমা নেওয়া হয়েছে</option><option>কাজ চলছে</option><option>সম্পূর্ণ</option><option>ডেলিভারি হয়েছে</option></select></div>
+                        <div class="form-group"><label>তারিখ</label><input id="rep-date" type="date" class="form-control"></div>
+                    </div><button class="btn btn-success" onclick="saveRepair()">💾 সার্ভিস এন্ট্রি সেভ করুন</button>
+                </div>
+                <div class="card"><div class="card-title">📋 সার্ভিস / রিপেয়ার ইতিহাস</div><div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>কাস্টমার</th><th>মোবাইল</th><th>ডিভাইস / IMEI</th><th>সমস্যা</th><th>চার্জ</th><th>খরচ</th><th>স্ট্যাটাস</th><th>এন্ট্রি</th></tr></thead><tbody id="repair-body"></tbody></table></div></div>
+            </div>
+
+            <!-- TAB 6: EXPENSES -->
+            <div id="tab-expenses" class="hidden">
+                <div class="card"><div class="card-title">💸 দোকানের দৈনিক খরচ</div><div class="grid-3">
+                    <div class="form-group"><label>খরচের খাত</label><select id="exp-category" class="form-control"><option>দোকান ভাড়া</option><option>বিদ্যুৎ বিল</option><option>ইন্টারনেট / ফোন</option><option>যাতায়াত</option><option>স্টাফ বেতন</option><option>অন্যান্য</option></select></div>
+                    <div class="form-group"><label>টাকার পরিমাণ (₹)</label><input id="exp-amount" type="number" min="0.01" step="0.01" class="form-control"></div>
+                    <div class="form-group"><label>তারিখ</label><input id="exp-date" type="date" class="form-control"></div>
+                    <div class="form-group" style="grid-column:1/-1"><label>বিবরণ</label><input id="exp-note" class="form-control" placeholder="খরচের বিস্তারিত"></div>
+                </div><button class="btn btn-success" onclick="saveExpense()">💾 খরচ সেভ করুন</button></div>
+                <div class="card"><div class="card-title">📒 খরচের ইতিহাস</div><p id="expense-total" style="font-weight:700;margin-bottom:10px"></p><div class="table-wrap"><table><thead><tr><th>তারিখ</th><th>খাত</th><th>বিবরণ</th><th>টাকা</th><th>এন্ট্রি</th></tr></thead><tbody id="expense-body"></tbody></table></div></div>
+            </div>
+
+            <!-- TAB 4: DIRECT DEVICE SYNC (BACKUP / RESTORE) -->
+            <div id="tab-sync" class="hidden">
+                <div class="card" style="max-width:650px; margin:0 auto;">
+                    <div class="card-title">📲 মোবাইল থেকে ল্যাপটপে সরাসরি ডেটা ট্রান্সফার</div>
+                    <p style="font-size:13px; color:#475569; margin-bottom:15px;">
+                        ক্লাউড সিঙ্ক ছাড়াও আপনি যেকোনো সময় ১ ক্লিকে ফাইল বা কোডের মাধ্যমে মোবাইল ও ল্যাপটপের সমস্ত প্রোডাক্ট, ছবি ও হিসাব হুবহু এক করতে পারবেন:
+                    </p>
+
+                    <div style="background:#f8fafc; padding:14px; border-radius:10px; border:1px solid #cbd5e1; margin-bottom:15px;">
+                        <h4 style="font-size:14px; color:#1e3a8a; margin-bottom:8px;">পদ্ধতি ১: ব্যাকআপ ফাইল ডাউনলোড ও আপলোড (সবচেয়ে সহজ)</h4>
+                        <div class="grid-2">
+                            <button onclick="exportDataFile()" class="btn btn-primary">📥 ব্যাকআপ ফাইল ডাউনলোড করুন</button>
+                            <label class="btn btn-success" style="cursor:pointer;">
+                                📤 ব্যাকআপ ফাইল আপলোড করুন
+                                <input type="file" accept=".json" class="hidden" onchange="importDataFile(event)">
+                            </label>
+                        </div>
+                    </div>
+
+                    <div style="background:#f8fafc; padding:14px; border-radius:10px; border:1px solid #cbd5e1;">
+                        <h4 style="font-size:14px; color:#1e3a8a; margin-bottom:8px;">পদ্ধতি ২: সিঙ্ক কোড কপি ও পেস্ট (WhatsApp-এ পাঠানোর জন্য)</h4>
+                        <button onclick="copySyncCode()" class="btn btn-info" style="width:100%; margin-bottom:10px;">📋 সিঙ্ক কোড তৈরি ও কপি করুন</button>
+                        <textarea id="paste-sync-code" rows="3" class="form-control" placeholder="অন্য ডিভাইস থেকে কপি করা সিঙ্ক কোডটি এখানে পেস্ট করুন..."></textarea>
+                        <button onclick="applySyncCode()" class="btn btn-warning" style="width:100%; margin-top:8px;">⚡ কোড থেকে ডেটা লোড করুন</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB 5: SETTINGS & PASSWORD (OWNER ONLY) -->
+            <div id="tab-settings" class="hidden">
+                <div class="card" style="max-width:500px; margin:0 auto;">
+                    <div class="card-title">🔑 পাসওয়ার্ড পরিবর্তন ও মালিকানা কন্ট্রোল</div>
+                    <div class="form-group">
+                        <label>কোন অ্যাকাউন্টের পাসওয়ার্ড পরিবর্তন করবেন?</label>
+                        <select id="set-role" class="form-control">
+                            <option value="owner">Owner (মালিক - Dipakesh Bera)</option>
+                            <option value="staff1">Staff 1 (কর্মচারী ১)</option>
+                            <option value="staff2">Staff 2 (কর্মচারী ২)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>নতুন পাসওয়ার্ড দিন</label>
+                        <input type="text" id="set-new-pass" class="form-control" placeholder="নতুন পাসওয়ার্ড লিখুন">
+                    </div>
+                    <button onclick="changePassword()" class="btn btn-primary">পাসওয়ার্ড আপডেট করুন</button>
+                    <hr style="margin:18px 0;border:0;border-top:1px solid #e2e8f0;">
+                    <div class="card-title">🛡️ বিলের ডিফল্ট ওয়ারেন্টি / গ্যারান্টি</div>
+                    <p style="font-size:12px;color:#64748b;margin-bottom:8px;">এখানে একবার শর্ত লিখে সেভ করলে পরবর্তী প্রতিটি নতুন বিলে নিজে থেকেই যুক্ত হবে। প্রয়োজনে বিলে আলাদা করে সম্পাদনা করতে পারবেন।</p>
+                    <textarea id="default-warranty-text" class="form-control" rows="4" placeholder="যেমন: ১ বছরের সার্ভিস ওয়ারেন্টি। физিক্যাল ড্যামেজ / জলে ভেজা / ভাঙা থাকলে ওয়ারেন্টি প্রযোজ্য নয়।"></textarea>
+                    <button onclick="saveDefaultWarranty()" class="btn btn-success" style="width:100%;margin-top:8px;">💾 ডিফল্ট ওয়ারেন্টি সেভ করুন</button>
+                    <p id="warranty-save-status" style="font-size:11px;color:#15803d;margin-top:6px;"></p>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div id="side-camera-modal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(0,0,0,.92);align-items:center;justify-content:center;padding:16px;">
+  <div style="width:100%;max-width:520px;background:#fff;border-radius:14px;padding:14px;text-align:center;">
+    <h3 style="margin:4px 0 12px;">📷 পণ্যের ছবি তুলুন</h3>
+    <video id="side-camera-video" autoplay playsinline style="width:100%;max-height:65vh;object-fit:contain;background:#111;border-radius:10px;"></video>
+    <div style="display:flex;gap:10px;margin-top:12px;">
+      <button type="button" class="btn btn-success" style="flex:1" onclick="takeSideCameraPhoto()">📸 ছবি তুলুন</button>
+      <button type="button" class="btn btn-dark" style="flex:1" onclick="closeSideCamera()">বন্ধ করুন</button>
+    </div>
+  </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+        const DEFAULT_IMG = "data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='80' height='80'><rect width='80' height='80' fill='%23e2e8f0'/><text x='18' y='45' font-size='12' fill='%2364748b'>Item</text></svg>";
+        
+        let state = {
+            syncId: localStorage.getItem('renuka_v10_id') || 'renuka9564927202@gmail.com',
+            user: null,
+            selectedCat: 'All',
+            currentPhoto: DEFAULT_IMG,
+            purchasePhoto: '',
+            currentPhotos: {},
+            purchasePhotos: {},
+            cart: [],
+            db: JSON.parse(localStorage.getItem('renuka_v10_db')) || {
+                updatedAt: 0,
+                passwords: { owner: 'admin123', staff1: 'staff123', staff2: 'staff456' },
+                products: [],
+                sales: [],
+                purchases: []
+            }
+        };
+        // Backward-compatible migration for existing v10 data
+        if (!Array.isArray(state.db.purchases)) state.db.purchases = [];
+        if (!Array.isArray(state.db.recharges)) state.db.recharges = [];
+        if (!Array.isArray(state.db.repairs)) state.db.repairs = [];
+        if (!Array.isArray(state.db.expenses)) state.db.expenses = [];
+        if (typeof state.db.warrantyText !== 'string') state.db.warrantyText = '';
+
+
+        // ==================== SUPABASE CLOUD SYNC ENGINE ====================
+        const SUPABASE_URL = 'https://iiusrgtlcmtbmcsvtbrn.supabase.co';
+        const SUPABASE_PUBLISHABLE_KEY = 'sb_publishable_XzXrmnHxD5CD5HeAL3b0gA_07vU4knn';
+        const SUPABASE_AUTH_EMAIL = 'beradipakesh@gmail.com';
+        const SUPABASE_STORE_ID = 'renuka-telecom';
+        const SUPABASE_DATA_KEY = 'app_state';
+        const PASSWORD_RESET_URL = 'https://beradipakesh.github.io/renuka-telecom-android/reset-password.html';
+        const sbClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
+            auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
+        }) : null;
+        let realtimeChannel = null;
+
+        async function uploadShopState() {
+            const { data: userData, error: userError } = await sbClient.auth.getUser();
+            if (userError || !userData?.user) throw new Error('Supabase লগইন নেই');
+            const payload = { ...state.db, updatedAt: Math.max(Date.now(), Number(state.db.updatedAt) || 0) };
+            state.db.updatedAt = payload.updatedAt;
+            const { error } = await sbClient.from('shop_data').upsert({
+                store_id: SUPABASE_STORE_ID,
+                data_key: SUPABASE_DATA_KEY,
+                data_value: payload,
+                updated_by: userData.user.id,
+                updated_at: new Date().toISOString()
+            }, { onConflict: 'store_id,data_key' });
+            if (error) throw error;
+            state.db = payload;
+            localStorage.setItem('renuka_v10_db', JSON.stringify(state.db));
+        }
+
+        async function readShopState() {
+            const { data, error } = await sbClient.from('shop_data')
+                .select('data_value,updated_at')
+                .eq('store_id', SUPABASE_STORE_ID)
+                .eq('data_key', SUPABASE_DATA_KEY)
+                .maybeSingle();
+            if (error) throw error;
+            if (data?.data_value) return data.data_value;
+
+            // Compatibility reader: older Supabase setup stored each section
+            // under its own key. Read those rows without deleting or modifying them.
+            const legacy = await sbClient.from('shop_data')
+                .select('data_key,data_value,updated_at')
+                .eq('store_id', SUPABASE_STORE_ID);
+            if (legacy.error) throw legacy.error;
+            const rows = legacy.data || [];
+            const byKey = Object.fromEntries(rows.map(row => [row.data_key, row.data_value]));
+            const hasLegacyContent = ['products','sales','recharges','repairs','expenses','customers']
+                .some(key => Array.isArray(byKey[key]) && byKey[key].length > 0);
+            if (!hasLegacyContent) return null;
+            const newest = rows.reduce((latest, row) => Math.max(latest, Date.parse(row.updated_at || '') || 0), 0);
+            const migrated = { updatedAt: newest || 0, products: [], sales: [], purchases: [], recharges: [], repairs: [], expenses: [], customers: [] };
+            for (const key of ['products','sales','recharges','repairs','expenses','customers']) {
+                if (Array.isArray(byKey[key])) migrated[key] = byKey[key];
+            }
+            if (byKey.settings && typeof byKey.settings === 'object' && !Array.isArray(byKey.settings)) {
+                if (byKey.settings.passwords) migrated.passwords = byKey.settings.passwords;
+                if (typeof byKey.settings.warrantyText === 'string') migrated.warrantyText = byKey.settings.warrantyText;
+            }
+            return migrated;
+        }
+
+        async function sendCloudPasswordReset() {
+            if (!sbClient) return alert('Supabase সংযোগ পাওয়া যায়নি। ইন্টারনেট চালু করে আবার চেষ্টা করুন।');
+            const ok = confirm('beradipakesh@gmail.com ঠিকানায় ক্লাউড পাসওয়ার্ড রিসেট করার ইমেইল পাঠাব?');
+            if (!ok) return;
+            try {
+                const { error } = await sbClient.auth.resetPasswordForEmail(SUPABASE_AUTH_EMAIL, { redirectTo: PASSWORD_RESET_URL });
+                if (error) throw error;
+                alert('রিসেট ইমেইলের অনুরোধ পাঠানো হয়েছে। Gmail-এর Inbox ও Spam ফোল্ডার দেখুন। ইমেইলের লিংক খুলে নতুন পাসওয়ার্ড সেট করুন।');
+            } catch (e) {
+                alert('রিসেট ইমেইল পাঠানো যায়নি: ' + (e.message || 'Supabase ইমেইল সেটিং পরীক্ষা করুন।'));
+            }
+        }
+
+        let recoveryPromptOpen = false;
+        if (sbClient) {
+            sbClient.auth.onAuthStateChange((event) => {
+                if (event === 'PASSWORD_RECOVERY' && !recoveryPromptOpen) {
+                    recoveryPromptOpen = true;
+                    setTimeout(async () => {
+                        const newPassword = prompt('নতুন Supabase ক্লাউড পাসওয়ার্ড দিন (কমপক্ষে ৬ অক্ষর):');
+                        if (!newPassword || newPassword.length < 6) {
+                            alert('পাসওয়ার্ড পরিবর্তন করা হয়নি। রিসেট লিংক আবার খুলে চেষ্টা করুন।');
+                            recoveryPromptOpen = false;
+                            return;
+                        }
+                        try {
+                            const { error } = await sbClient.auth.updateUser({ password: newPassword });
+                            if (error) throw error;
+                            alert('ক্লাউড পাসওয়ার্ড সফলভাবে পরিবর্তিত হয়েছে। এখন নতুন পাসওয়ার্ড দিয়ে ক্লাউডে লগইন করতে পারবেন।');
+                        } catch (e) {
+                            alert('পাসওয়ার্ড পরিবর্তন হয়নি: ' + (e.message || 'আবার চেষ্টা করুন।'));
+                        } finally { recoveryPromptOpen = false; }
+                    }, 300);
+                }
+            });
+        }
+
+        async function saveAndPush() {
+            state.db.updatedAt = Date.now();
+            localStorage.setItem('renuka_v10_db', JSON.stringify(state.db));
+            updateSyncStatus('⏳ Supabase ক্লাউডে সেভ হচ্ছে...', '#fef08a', '#854d0e');
+            try {
+                await uploadShopState();
+                updateSyncStatus(`✅ সব ডিভাইসে সিঙ্ক হয়েছে (${state.db.products.length} টি প্রোডাক্ট)`, '#dcfce7', '#166534');
+            } catch (e) {
+                console.error('Supabase save error:', e);
+                updateSyncStatus('⚠️ ক্লাউডে সেভ হয়নি — ইন্টারনেট/লগইন পরীক্ষা করুন', '#fee2e2', '#991b1b');
+            }
+        }
+
+        async function forceCloudSync(manual = false) {
+            if (manual) updateSyncStatus('🔄 Supabase থেকে ডেটা আনা হচ্ছে...', '#fef08a', '#854d0e');
+            try {
+                const remoteData = await readShopState();
+                const remoteTime = Number(remoteData?.updatedAt) || 0;
+                const localTime = Number(state.db.updatedAt) || 0;
+                if (remoteData && remoteTime > localTime) {
+                    state.db = remoteData;
+                    if (!Array.isArray(state.db.purchases)) state.db.purchases = [];
+                        if (!Array.isArray(state.db.recharges)) state.db.recharges = [];
+                        if (!Array.isArray(state.db.repairs)) state.db.repairs = [];
+                        if (!Array.isArray(state.db.expenses)) state.db.expenses = [];
+                    localStorage.setItem('renuka_v10_db', JSON.stringify(state.db));
+                    refreshAllViews();
+                    updateSyncStatus(`✅ অন্য ডিভাইসের নতুন ডেটা এসেছে (${state.db.products.length} টি প্রোডাক্ট)`, '#dcfce7', '#166534');
+                } else if (!remoteData || localTime > remoteTime) {
+                    await uploadShopState();
+                    updateSyncStatus(`✅ এই ডিভাইসের ডেটা ক্লাউডে সেভ হয়েছে (${state.db.products.length} টি প্রোডাক্ট)`, '#dcfce7', '#166534');
+                } else {
+                    updateSyncStatus(`☁️ সব ডিভাইস আপ-টু-ডেট (${state.db.products.length} টি প্রোডাক্ট)`, '#dcfce7', '#166534');
+                }
+            } catch (e) {
+                console.error('Supabase sync error:', e);
+                updateSyncStatus('⚠️ ক্লাউড সংযোগ হয়নি — লোকাল ডেটা নিরাপদে আছে', '#fee2e2', '#991b1b');
+            }
+        }
+
+        function startRealtimeSync() {
+            if (realtimeChannel) sbClient.removeChannel(realtimeChannel);
+            realtimeChannel = sbClient.channel('renuka-shop-live-sync')
+                .on('postgres_changes', {
+                    event: '*', schema: 'public', table: 'shop_data',
+                    filter: `store_id=eq.${SUPABASE_STORE_ID}`
+                }, async (payload) => {
+                    if (payload.new?.data_key !== SUPABASE_DATA_KEY) return;
+                    const incoming = payload.new?.data_value;
+                    if (incoming && (Number(incoming.updatedAt) || 0) > (Number(state.db.updatedAt) || 0)) {
+                        state.db = incoming;
+                        if (!Array.isArray(state.db.purchases)) state.db.purchases = [];
+                        if (!Array.isArray(state.db.recharges)) state.db.recharges = [];
+                        if (!Array.isArray(state.db.repairs)) state.db.repairs = [];
+                        if (!Array.isArray(state.db.expenses)) state.db.expenses = [];
+                        localStorage.setItem('renuka_v10_db', JSON.stringify(state.db));
+                        refreshAllViews();
+                        updateSyncStatus('⚡ অন্য ডিভাইসের পরিবর্তন সঙ্গে সঙ্গে এসেছে', '#dcfce7', '#166534');
+                    }
+                }).subscribe();
+        }
+
+        // Backup polling for browser tabs where realtime is temporarily unavailable.
+        setInterval(() => {
+            if (state.user) forceCloudSync(false);
+        }, 12000);
+
+        // ==================== AUTHENTICATION ====================
+        async function loginUser() {
+            const idVal = document.getElementById('sync-id-input').value.trim();
+            const role = document.getElementById('login-role').value;
+            const pass = document.getElementById('login-password').value;
+
+            if (!idVal) return alert('অনুগ্রহ করে ক্লাউড সিঙ্ক আইডি দিন!');
+            state.syncId = idVal;
+            localStorage.setItem('renuka_v10_id', idVal);
+
+            try {
+                if (!sbClient) throw new Error('Supabase লাইব্রেরি লোড হয়নি। ইন্টারনেট চালু করে পেজটি আবার খুলুন।');
+                let { data: sessionData } = await sbClient.auth.getSession();
+                if (!sessionData?.session) {
+                    const cloudPassword = prompt('এই ডিভাইসটি RENUKA TELECOM Supabase ক্লাউডের সঙ্গে একবার যুক্ত করতে Supabase অ্যাকাউন্টের পাসওয়ার্ড লিখুন। পাসওয়ার্ড কোথাও সেভ বা শেয়ার করা হবে না।');
+                    if (cloudPassword === null || !cloudPassword) return;
+                    const { data, error } = await sbClient.auth.signInWithPassword({
+                        email: SUPABASE_AUTH_EMAIL,
+                        password: cloudPassword
+                    });
+                    if (error) throw error;
+                    sessionData = data;
+                }
+                const { data: profile, error: profileError } = await sbClient.from('profiles')
+                    .select('id,role').eq('id', sessionData.session.user.id).maybeSingle();
+                if (profileError || !profile) throw new Error('এই Supabase অ্যাকাউন্টের দোকানের প্রোফাইল পাওয়া যায়নি।');
+                const firstCloudData = await readShopState();
+                if (firstCloudData && (Number(firstCloudData.updatedAt) || 0) > (Number(state.db.updatedAt) || 0)) {
+                    state.db = firstCloudData;
+                    if (!state.db.passwords) state.db.passwords = { owner: 'admin123', staff1: 'staff123', staff2: 'staff456' };
+                    if (!Array.isArray(state.db.purchases)) state.db.purchases = [];
+                        if (!Array.isArray(state.db.recharges)) state.db.recharges = [];
+                        if (!Array.isArray(state.db.repairs)) state.db.repairs = [];
+                        if (!Array.isArray(state.db.expenses)) state.db.expenses = [];
+                    localStorage.setItem('renuka_v10_db', JSON.stringify(state.db));
+                }
+                if (pass !== state.db.passwords[role]) {
+                    document.getElementById('login-error').classList.remove('hidden');
+                    return;
+                }
+
+                state.user = role;
+                document.getElementById('login-screen').classList.add('hidden');
+                document.getElementById('main-app').classList.remove('hidden');
+                document.getElementById('login-error').classList.add('hidden');
+                document.getElementById('active-id-display').innerText = 'ID: ' + state.syncId;
+                const names = { owner: 'OWNER (DIPAKESH BERA)', staff1: 'STAFF 1', staff2: 'STAFF 2' };
+                document.getElementById('user-badge').innerText = names[role];
+                applyPermissions();
+                refreshAllViews();
+                startRealtimeSync();
+                await forceCloudSync(true);
+            } catch (e) {
+                console.error('Cloud login error:', e);
+                document.getElementById('login-error').innerText = 'ক্লাউড লগইন ব্যর্থ: ' + (e.message || 'পাসওয়ার্ড বা ইন্টারনেট পরীক্ষা করুন।');
+                document.getElementById('login-error').classList.remove('hidden');
+            }
+        }
+
+        function logoutUser() {
+            state.user = null;
+            document.getElementById('login-password').value = '';
+            document.getElementById('main-app').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+        }
+
+        function applyPermissions() {
+            const isOwner = state.user === 'owner';
+            document.querySelectorAll('.owner-only').forEach(el => {
+                if (isOwner) el.classList.remove('hidden');
+                else el.classList.add('hidden');
+            });
+        }
+
+        function saveDefaultWarranty() {
+            if (state.user !== 'owner') return alert('শুধুমাত্র Owner এই সেটিংস পরিবর্তন করতে পারবেন।');
+            state.db.warrantyText = document.getElementById('default-warranty-text').value.trim();
+            saveAndPush();
+            document.getElementById('warranty-save-status').innerText = 'ডিফল্ট ওয়ারেন্টি / গ্যারান্টি সেভ হয়েছে এবং সিঙ্ক হচ্ছে।';
+        }
+
+        function changePassword() {
+            if (state.user !== 'owner') return;
+            const target = document.getElementById('set-role').value;
+            const newPass = document.getElementById('set-new-pass').value.trim();
+            if (!newPass) return alert('নতুন পাসওয়ার্ড লিখুন!');
+            state.db.passwords[target] = newPass;
+            document.getElementById('set-new-pass').value = '';
+            saveAndPush();
+            alert('পাসওয়ার্ড সফলভাবে পরিবর্তন ও ক্লাউডে আপলোড হয়েছে!');
+        }
+
+        // ==================== NAVIGATION ====================
+        function openTab(tab) {
+            ['pos', 'inventory', 'purchase', 'sales', 'recharge', 'repair', 'expenses', 'sync', 'settings'].forEach(t => {
+                document.getElementById('tab-' + t).classList.add('hidden');
+                document.getElementById('btn-' + t).classList.remove('active');
+            });
+            document.getElementById('tab-' + tab).classList.remove('hidden');
+            document.getElementById('btn-' + tab).classList.add('active');
+            if (tab === 'purchase') renderPurchaseForm();
+            if (tab === 'settings') {
+                const warrantyField = document.getElementById('default-warranty-text');
+                if (warrantyField) warrantyField.value = state.db.warrantyText || '';
+            }
+        }
+
+        // ==================== CAMERA & BARCODE SCANNER ====================
+        function handleProductPhoto(event) {
+            const input = event.target;
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            if (!file.type || !file.type.startsWith('image/')) {
+                alert('অনুগ্রহ করে ক্যামেরা বা গ্যালারি থেকে ছবির ফাইল নির্বাচন করুন।');
+                input.value = '';
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    try {
+                        const maxSide = 900;
+                        const scale = Math.min(1, maxSide / Math.max(img.width, img.height));
+                        const canvas = document.createElement('canvas');
+                        canvas.width = Math.max(1, Math.round(img.width * scale));
+                        canvas.height = Math.max(1, Math.round(img.height * scale));
+                        const ctx = canvas.getContext('2d');
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+
+                        // Keep a clear enough image for the inventory list and compress for storage.
+                        state.currentPhoto = canvas.toDataURL('image/jpeg', 0.82);
+                        const preview = document.getElementById('p-preview');
+                        if (preview) {
+                            preview.src = state.currentPhoto;
+                            preview.style.display = 'block';
+                            preview.style.width = '96px';
+                            preview.style.height = '96px';
+                            preview.style.objectFit = 'contain';
+                            preview.style.background = '#f8fafc';
+                            preview.style.border = '1px solid #cbd5e1';
+                            preview.style.borderRadius = '8px';
+                        }
+                        suggestExistingProductFromPhoto(state.currentPhoto);
+                    } catch (err) {
+                        alert('ছবিটি প্রস্তুত করা যায়নি। অন্য ছবি দিয়ে আবার চেষ্টা করুন।');
+                    }
+                };
+                img.onerror = function() {
+                    alert('ছবিটি খোলা যায়নি। ক্যামেরা থেকে আবার ছবি তুলুন।');
+                };
+                img.src = e.target.result;
+            };
+            reader.onerror = function() {
+                alert('ছবিটি পড়া যায়নি। আবার চেষ্টা করুন।');
+            };
+            reader.readAsDataURL(file);
+            // Allow selecting the same photo again after correcting a failed capture.
+            input.value = '';
+        }
+
+        async function scanBarcodeFromPhoto(event, targetInputId) {
+            const input = event.target;
+            const file = input.files && input.files[0];
+            if (!file) return;
+
+            try {
+                if ('BarcodeDetector' in window) {
+                    try {
+                        const bitmap = await createImageBitmap(file);
+                        const detector = new BarcodeDetector();
+                        const codes = await detector.detect(bitmap);
+                        if (bitmap.close) bitmap.close();
