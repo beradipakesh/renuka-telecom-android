@@ -138,6 +138,7 @@
 
             <button onclick="loginUser()" class="btn btn-primary">🔐 লগইন করুন</button>
             <button onclick="sendCloudPasswordReset()" class="btn btn-info" style="width:100%; margin-top:8px;">✉️ ক্লাউড পাসওয়ার্ড ভুলে গেছেন? রিসেট লিংক পাঠান</button>
+            <p id="password-reset-status" role="status" aria-live="polite" style="display:none;font-size:13px;line-height:1.5;margin-top:10px;padding:10px;border-radius:8px;overflow-wrap:anywhere;"></p>
             <p id="login-error" style="color:#dc2626; font-size:13px; text-align:center; margin-top:8px;" class="hidden">ভুল পাসওয়ার্ড! আবার চেষ্টা করুন।</p>
             <p style="font-size:11px; color:#64748b; text-align:center; margin-top:12px;">ক্লাউড অ্যাকাউন্টের পাসওয়ার্ড ব্যবহার করুন।</p>
         </div>
@@ -662,7 +663,7 @@
         const SUPABASE_AUTH_EMAIL = 'beradipakesh@gmail.com';
         const SUPABASE_STORE_ID = 'renuka-telecom';
         const SUPABASE_DATA_KEY = 'app_state';
-        const PASSWORD_RESET_URL = 'https://beradipakesh.github.io/renuka-telecom-android/';
+        const PASSWORD_RESET_URL = 'https://beradipakesh.github.io/renuka-telecom-android/reset-password.html';
         const sbClient = (window.supabase && window.supabase.createClient) ? window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY, {
             auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true }
         }) : null;
@@ -719,21 +720,36 @@
 
         // Expose the recovery handler explicitly for the login button's inline onclick.
         window.sendCloudPasswordReset = async function sendCloudPasswordReset() {
+            const button = document.querySelector('button[onclick="sendCloudPasswordReset()"]');
+            const status = document.getElementById('password-reset-status');
+            const showStatus = (message, ok = false) => {
+                if (!status) return;
+                status.style.display = 'block';
+                status.style.background = ok ? '#dcfce7' : '#fee2e2';
+                status.style.color = ok ? '#166534' : '#991b1b';
+                status.textContent = message;
+            };
+            if (!window.supabase || !sbClient) {
+                showStatus('Supabase সংযোগ তৈরি হয়নি। ইন্টারনেট পরীক্ষা করে পেজ Reload করুন।');
+                return;
+            }
+            if (!navigator.onLine) {
+                showStatus('ইন্টারনেট সংযোগ নেই। ইন্টারনেট চালু করে আবার চেষ্টা করুন।');
+                return;
+            }
+            if (button) { button.disabled = true; button.textContent = 'রিসেট ইমেল পাঠানো হচ্ছে…'; }
+            showStatus('রিসেট ইমেলের অনুরোধ পাঠানো হচ্ছে…', true);
             try {
-                if (!window.supabase || !sbClient) {
-                    alert('Supabase সংযোগ তৈরি হয়নি। পেজ Reload করে আবার চেষ্টা করুন।');
-                    return;
-                }
-                const ok = confirm('beradipakesh@gmail.com ঠিকানায় ক্লাউড পাসওয়ার্ড রিসেটের ইমেইল পাঠাব?');
-                if (!ok) return;
                 const { error } = await sbClient.auth.resetPasswordForEmail(
                     SUPABASE_AUTH_EMAIL,
                     { redirectTo: PASSWORD_RESET_URL }
                 );
                 if (error) throw error;
-                alert('রিসেট ইমেইলের অনুরোধ পাঠানো হয়েছে। Gmail Inbox ও Spam দেখুন।');
+                showStatus('Supabase রিসেট অনুরোধ গ্রহণ করেছে। Gmail Inbox, Spam ও Promotions দেখুন। ইমেলের লিংক খুললে নতুন পাসওয়ার্ড সেট করার পেজ আসবে।', true);
             } catch (e) {
-                alert('রিসেট ইমেইল পাঠানো যায়নি: ' + (e && e.message ? e.message : 'অজানা সমস্যা'));
+                showStatus('রিসেট ইমেল পাঠানো যায়নি: ' + (e && e.message ? e.message : 'অজানা সমস্যা'));
+            } finally {
+                if (button) { button.disabled = false; button.textContent = '✉️ ক্লাউড পাসওয়ার্ড ভুলে গেছেন? রিসেট লিংক পাঠান'; }
             }
         };
 
